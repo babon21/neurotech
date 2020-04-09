@@ -6,3 +6,21 @@
     /* padding-right: 15px; */
     /* padding-left: 15px; */
 }
+
+a {
+    color: black;
+}
+
+li {
+    padding: 0.6em;
+}
+
+.main-nav {
+    /* display: flex; */
+    /* justify-content: space-between; */
+    text-transform: uppercase;
+}
+
+.brain {
+    height: 900px;
+}
