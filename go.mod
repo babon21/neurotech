@@ -2,4 +2,4 @@ module github.com/babon21/neurotech
 
 go 1.14
 
-require go.uber.org/zap v1.14.1 // indirect
+require github.com/rs/zerolog v1.18.0
