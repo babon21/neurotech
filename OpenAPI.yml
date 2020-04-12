@@ -9,14 +9,22 @@ servers:
   - url: http://staging-api.example.com
     description: Optional server description, e.g. Internal staging server for testing
 paths:
-
-  /educational-material:
+  /study-materials:
     get:
-      summary: Returns a list of educational materials.
-      description: Optional extended description in CommonMark or HTML.
+      summary: Returns a list of study-materials.
+      description: List from specifying discipline.
+      parameters:
+        - name: discipline_name
+          in: path
+          required: true
+          description: specifying discipline.
+          schema:
+            type: string
+            format: int64
+            minimum: 1
       responses:
-        '200':    # status code
-          description: A JSON array of user names
+        '200': # status code
+          description: A JSON array of study materials.
           content:
             application/json:
               schema: 
@@ -25,43 +33,51 @@ paths:
                   type: string
   
     post:
-      summary: Upload educational material.
-      description: Optional extended description in CommonMark or HTML.
+      summary: Upload study-materials.
+      description: Upload one or more study-materials.
+      # TODO need add params 
+       # discipline_name : string
       responses:
-        '200':    # status code
-          description: A JSON array of user names
-          content:
-            application/json:
-              schema: 
-                type: array
-                items: 
-                  type: string
+        '200': # status code
+          description:
 
-    put:
-      summary: Rename educational material.
-      description: Optional extended description in CommonMark or HTML.
-      responses:
-        '200':    # status code
-          description: A JSON array of user names
+    patch:
+      summary: Rename study-materials.
+      description: Rename study-materials.
+      requestBody:
+        required: true
           content:
             application/json:
               schema: 
-                type: array
-                items: 
+              type: object
+              properties:
+                old_name:
                   type: string
+                new_name:
+                  type: string
+                discipline_name:
+                  type: string
+      responses:
+        '200': # status code
+          description: 
     
     delete:
-      summary: Delete educational material.
-      description: Optional extended description in CommonMark or HTML.
-      responses:
-        '200':    # status code
-          description: A JSON array of user names
+      summary: Delete study-materials.
+      description: Delete study-materials.
+      requestBody:
+        required: true
           content:
             application/json:
               schema: 
-                type: array
-                items: 
+              type: object
+              properties:
+                name:
                   type: string
+                discipline_name:
+                  type: string
+      responses:
+        '200': # status code
+          description:
 
   /disciplines:
     get:
@@ -127,7 +143,6 @@ paths:
         '200':    # status code
           description: 
           
-
   /news:
     get:
       summary: Returns a list of news.
