@@ -5,10 +5,17 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
+
+	"github.com/rs/zerolog/log"
 )
+
+func main() {
+	disciplineHandler := &Handler{path: "disciplines/"}
+	http.Handle("/disciplines", disciplineHandler)
+	http.ListenAndServe(":8080", nil)
+}
 
 var uploadFormTmpl = []byte(`
 	<html>
@@ -112,7 +119,8 @@ func (h *Handler) RenameDiscipline(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) GetDisciplineList(w http.ResponseWriter, r *http.Request) {
 	files, err := ioutil.ReadDir(h.path)
 	if err != nil {
-		log.Fatal(err)
+		log.Err(err).Msg("read dir err")
+		return
 	}
 
 	fileNames := make([]string, 0, len(files))
@@ -125,18 +133,12 @@ func (h *Handler) GetDisciplineList(w http.ResponseWriter, r *http.Request) {
 	fileNamesJSON, err := json.Marshal(fileNames)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Err(err).Msg("json marshall err")
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(fileNamesJSON)
-}
-
-func main() {
-	disciplineHandler := &Handler{path: "disciplines/"}
-	http.Handle("/disciplines", disciplineHandler)
-	http.ListenAndServe(":8080", nil)
 }
 
 func studyHandler(w http.ResponseWriter, r *http.Request) {
@@ -180,7 +182,7 @@ func CreateFolder(folderName string) bool {
 	if os.IsNotExist(err) {
 		errDir := os.MkdirAll(folderName, 0755)
 		if errDir != nil {
-			log.Fatal(err)
+			log.Err(errDir).Msg("mkdir err")
 			return false
 		}
 		return true
