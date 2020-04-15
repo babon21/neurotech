@@ -23,22 +23,22 @@ paths:
             format: int64
             minimum: 1
       responses:
-        '200': # status code
+        "200": # status code
           description: A JSON array of study materials.
           content:
             application/json:
-              schema: 
+              schema:
                 type: array
-                items: 
+                items:
                   type: string
-  
+
     post:
       summary: Upload study-materials.
       description: Upload one or more study-materials.
-      # TODO need add params 
-       # discipline_name : string
+      # TODO need add params
+      # discipline_name : string
       responses:
-        '200': # status code
+        "200": # status code
           description:
 
     patch:
@@ -46,37 +46,37 @@ paths:
       description: Rename study-materials.
       requestBody:
         required: true
-          content:
-            application/json:
-              schema: 
-              type: object
-              properties:
-                old_name:
-                  type: string
-                new_name:
-                  type: string
-                discipline_name:
-                  type: string
+        content:
+          application/json:
+            schema:
+            type: object
+            properties:
+              old_name:
+                type: string
+              new_name:
+                type: string
+              discipline_name:
+                type: string
       responses:
-        '200': # status code
-          description: 
-    
+        "200": # status code
+          description:
+
     delete:
       summary: Delete study-materials.
       description: Delete study-materials.
       requestBody:
         required: true
-          content:
-            application/json:
-              schema: 
-              type: object
-              properties:
-                name:
-                  type: string
-                discipline_name:
-                  type: string
+        content:
+          application/json:
+            schema:
+            type: object
+            properties:
+              name:
+                type: string
+              discipline_name:
+                type: string
       responses:
-        '200': # status code
+        "200": # status code
           description:
 
   /disciplines:
@@ -84,15 +84,15 @@ paths:
       summary: Returns a list of disciplines.
       description: Optional extended description in CommonMark or HTML.
       responses:
-        '200':    # status code
+        "200": # status code
           description: A JSON array of discipline names
           content:
             application/json:
-              schema: 
+              schema:
                 type: array
-                items: 
+                items:
                   type: string
-  
+
     post:
       summary: Create discipline.
       description: Optional extended description in CommonMark or HTML.
@@ -106,8 +106,8 @@ paths:
                 name:
                   type: string
       responses:
-        '200':    # status code
-          description: 
+        "200": # status code
+          description:
 
     put:
       summary: Rename discipline.
@@ -124,9 +124,9 @@ paths:
                 new_name:
                   type: string
       responses:
-        '200':    # status code
+        "200": # status code
           description:
-    
+
     delete:
       summary: Delete discipline.
       description: Optional extended description in CommonMark or HTML.
@@ -140,60 +140,60 @@ paths:
                 name:
                   type: string
       responses:
-        '200':    # status code
-          description: 
-          
+        "200": # status code
+          description:
+
   /news:
     get:
       summary: Returns a list of news.
       description: Optional extended description in CommonMark or HTML.
       responses:
-        '200':    # status code
+        "200": # status code
           description: A JSON array of user names
           content:
             application/json:
-              schema: 
+              schema:
                 type: array
-                items: 
+                items:
                   type: string
-  
+
     post:
       summary: Create one news.
       description: Optional extended description in CommonMark or HTML.
       responses:
-        '200':    # status code
+        "200": # status code
           description: A JSON array of user names
           content:
             application/json:
-              schema: 
+              schema:
                 type: array
-                items: 
+                items:
                   type: string
 
     put:
       summary: Update one news.
       description: Optional extended description in CommonMark or HTML.
       responses:
-        '200':    # status code
+        "200": # status code
           description: A JSON array of user names
           content:
             application/json:
-              schema: 
+              schema:
                 type: array
-                items: 
+                items:
                   type: string
-    
+
     delete:
       summary: Delete one news.
       description: Optional extended description in CommonMark or HTML.
       responses:
-        '200':    # status code
+        "200": # status code
           description: A JSON array of user names
           content:
             application/json:
-              schema: 
+              schema:
                 type: array
-                items: 
+                items:
                   type: string
 
   /publications:
@@ -201,52 +201,52 @@ paths:
       summary: Returns a list of publications.
       description: Optional extended description in CommonMark or HTML.
       responses:
-        '200':    # status code
+        "200": # status code
           description: A JSON array of user names
           content:
             application/json:
-              schema: 
+              schema:
                 type: array
-                items: 
+                items:
                   type: string
-  
+
     post:
       summary: Create publication.
       description: Optional extended description in CommonMark or HTML.
       responses:
-        '200':    # status code
+        "200": # status code
           description: A JSON array of user names
           content:
             application/json:
-              schema: 
+              schema:
                 type: array
-                items: 
+                items:
                   type: string
 
     put:
       summary: Update publication.
       description: Optional extended description in CommonMark or HTML.
       responses:
-        '200':    # status code
+        "200": # status code
           description: A JSON array of user names
           content:
             application/json:
-              schema: 
+              schema:
                 type: array
-                items: 
+                items:
                   type: string
-    
+
     delete:
       summary: Delete publication.
       description: Optional extended description in CommonMark or HTML.
       responses:
-        '200':    # status code
+        "200": # status code
           description: A JSON array of user names
           content:
             application/json:
-              schema: 
+              schema:
                 type: array
-                items: 
+                items:
                   type: string
 
   /student-work:
@@ -254,50 +254,50 @@ paths:
       summary: Returns a list of student work.
       description: Optional extended description in CommonMark or HTML.
       responses:
-        '200':    # status code
+        "200": # status code
           description: A JSON array of user names
           content:
             application/json:
-              schema: 
+              schema:
                 type: array
-                items: 
+                items:
                   type: string
-  
+
     post:
       summary: Create student work.
       description: Optional extended description in CommonMark or HTML.
       responses:
-        '200':    # status code
+        "200": # status code
           description: A JSON array of user names
           content:
             application/json:
-              schema: 
+              schema:
                 type: array
-                items: 
+                items:
                   type: string
 
     put:
       summary: Update student work.
       description: Optional extended description in CommonMark or HTML.
       responses:
-        '200':    # status code
+        "200": # status code
           description: A JSON array of user names
           content:
             application/json:
-              schema: 
+              schema:
                 type: array
-                items: 
+                items:
                   type: string
-    
+
     delete:
       summary: Delete student work.
       description: Optional extended description in CommonMark or HTML.
       responses:
-        '200':    # status code
+        "200": # status code
           description: A JSON array of user names
           content:
             application/json:
-              schema: 
+              schema:
                 type: array
-                items: 
+                items:
                   type: string
