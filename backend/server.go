@@ -8,7 +8,7 @@ import (
 )
 
 type News struct {
-	Id      bson.ObjectId `json:"id" bson:" _id"`
+	ID      bson.ObjectId `json:"id" bson:" _id"`
 	Title   string        `json:"title" bson:"title"`
 	Content string        `json:"content" bson:"content"`
 }
@@ -35,6 +35,12 @@ func main() {
 			"Рассказать про redis",
 		})
 	}
+
+	newsHandler := &NewsHandler{
+		path: NewsPath,
+		News: collection,
+	}
+	http.Handle("/news", newsHandler)
 
 	disciplineHandler := &DisciplineHandler{path: DisciplinePath}
 	http.Handle("/disciplines", disciplineHandler)

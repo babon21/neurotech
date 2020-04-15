@@ -3,47 +3,51 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"os"
 
 	"github.com/babon21/neurotech/backend/utils"
 	"github.com/rs/zerolog/log"
+	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 const NewsPath = "news/"
 
 type NewsHandler struct {
 	path string
+	News *mgo.Collection
 }
 
 type NewsPost struct {
-	Name string
+	Title string
+	Name  string
 }
 
 type NewsPut struct {
-	OldName string `json:"old_name"`
-	NewName string `json:"new_name"`
+	ID    bson.ObjectId `json:"id" bson:"_id"`
+	Title string
+	Name  string
 }
 
 type NewsDelete struct {
-	Name string
+	ID bson.ObjectId `json:"id" bson:"_id"`
 }
 
 func (h *NewsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPost:
 		fmt.Println("Post request!")
-		// h.CreateDiscipline(w, r)
+		h.CreateNews(w, r)
 	case http.MethodDelete:
 		fmt.Println("Delete request!")
-		// h.DeleteDiscipline(w, r)
+		h.DeleteNews(w, r)
 	case http.MethodPut:
 		fmt.Println("Put request!")
-		// h.RenameDiscipline(w, r)
+		h.PutNews(w, r)
 	case http.MethodGet:
 		fmt.Println("Get request!")
-		// h.GetDisciplineList(w, r)
+		h.GetNewsList(w, r)
 	}
 }
 
@@ -98,26 +102,23 @@ func (h *NewsHandler) PutNews(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *NewsHandler) GetNewsList(w http.ResponseWriter, r *http.Request) {
-	files, err := ioutil.ReadDir(h.path)
+	news := []*News{}
+	// bson.M{} - это типа условия для поиска
+	err := h.News.Find(bson.M{}).All(&news)
 	if err != nil {
-		log.Err(err).Msg("read dir err")
-		return
+		panic(err)
 	}
 
-	fileNames := make([]string, 0, len(files))
-	for _, file := range files {
-		fmt.Println(file.Name())
-		fileNames = append(fileNames, file.Name())
-	}
-
-	fmt.Println(fileNames)
-	fileNamesJSON, err := json.Marshal(fileNames)
-
+	jsonNews, err := json.Marshal(news)
 	if err != nil {
 		log.Err(err).Msg("json marshall err")
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(fileNamesJSON)
+	ResponseWithJSON(w, jsonNews)
+}
+
+func ResponseWithJSON(w http.ResponseWriter, json []byte) {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Write(json)
 }
