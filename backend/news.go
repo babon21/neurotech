@@ -17,7 +17,7 @@ type News struct {
 }
 
 type NewsHandler struct {
-	News *mgo.Collection
+	Collection *mgo.Collection
 }
 
 type NewsDelete struct {
@@ -48,7 +48,7 @@ func (h *NewsHandler) CreateNews(w http.ResponseWriter, r *http.Request) {
 	}
 
 	news.ID = bson.NewObjectId()
-	err2 := h.News.Insert(news)
+	err2 := h.Collection.Insert(news)
 	if err2 != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -68,7 +68,7 @@ func (h *NewsHandler) DeleteNews(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err2 := h.News.Remove(bson.M{"_id": delete.ID})
+	err2 := h.Collection.Remove(bson.M{"_id": delete.ID})
 	if err2 != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -89,7 +89,7 @@ func (h *NewsHandler) PutNews(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err2 := h.News.Update(bson.M{"_id": news.ID}, news)
+	err2 := h.Collection.Update(bson.M{"_id": news.ID}, news)
 	if err2 != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -103,7 +103,7 @@ func (h *NewsHandler) GetNewsList(w http.ResponseWriter, r *http.Request) {
 
 	news := []*News{}
 	// bson.M{} - это типа условия для поиска
-	err := h.News.Find(bson.M{}).All(&news)
+	err := h.Collection.Find(bson.M{}).All(&news)
 	if err != nil {
 		panic(err)
 	}

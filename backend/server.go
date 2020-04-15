@@ -17,11 +17,11 @@ func main() {
 	database := session.DB("neurotech")
 
 	publicationCollection := initPublicationsCollection(database)
-	publicationHandler := &PublicationHandler{Publication: publicationCollection}
+	publicationHandler := &PublicationHandler{Collection: publicationCollection}
 	http.Handle("/publications", publicationHandler)
 
 	newsCollection := initNewsCollection(database)
-	newsHandler := &NewsHandler{News: newsCollection}
+	newsHandler := &NewsHandler{Collection: newsCollection}
 	http.Handle("/news", newsHandler)
 
 	disciplineHandler := &DisciplineHandler{path: DisciplinePath}

@@ -17,7 +17,7 @@ type Publication struct {
 }
 
 type PublicationHandler struct {
-	Publication *mgo.Collection
+	Collection *mgo.Collection
 }
 
 type PublicationDelete struct {
@@ -48,7 +48,7 @@ func (h *PublicationHandler) CreatePublication(w http.ResponseWriter, r *http.Re
 	}
 
 	publication.ID = bson.NewObjectId()
-	err2 := h.Publication.Insert(publication)
+	err2 := h.Collection.Insert(publication)
 	if err2 != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -68,7 +68,7 @@ func (h *PublicationHandler) DeletePublication(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	err2 := h.Publication.Remove(bson.M{"_id": delete.ID})
+	err2 := h.Collection.Remove(bson.M{"_id": delete.ID})
 	if err2 != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -89,7 +89,7 @@ func (h *PublicationHandler) EditPublication(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	err2 := h.Publication.Update(bson.M{"_id": publication.ID}, publication)
+	err2 := h.Collection.Update(bson.M{"_id": publication.ID}, publication)
 	if err2 != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -103,7 +103,7 @@ func (h *PublicationHandler) GetPublications(w http.ResponseWriter, r *http.Requ
 
 	publication := []*Publication{}
 	// bson.M{} - это типа условия для поиска
-	err := h.Publication.Find(bson.M{}).All(&publication)
+	err := h.Collection.Find(bson.M{}).All(&publication)
 	if err != nil {
 		panic(err)
 	}
