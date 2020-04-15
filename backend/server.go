@@ -8,7 +8,7 @@ import (
 )
 
 type News struct {
-	ID      bson.ObjectId `json:"id" bson:" _id"`
+	ID      bson.ObjectId `json:"id" bson:"_id"`
 	Title   string        `json:"title" bson:"title"`
 	Content string        `json:"content" bson:"content"`
 }
