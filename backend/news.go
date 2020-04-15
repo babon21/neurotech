@@ -123,3 +123,23 @@ func ResponseWithJSON(w http.ResponseWriter, json []byte) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.Write(json)
 }
+
+func InitNewsCollection(database *mgo.Database) *mgo.Collection {
+	// если коллекции не будет, то она создасться автоматически
+	collection := database.C("news")
+
+	if n, _ := collection.Count(); n == 0 {
+		collection.Insert(&News{
+			bson.NewObjectId(),
+			"mongodb",
+			"Рассказать про монгу",
+		})
+		collection.Insert(&News{
+			bson.NewObjectId(),
+			"redis",
+			"Рассказать про redis",
+		})
+	}
+
+	return collection
+}

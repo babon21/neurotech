@@ -118,3 +118,23 @@ func (h *PublicationHandler) GetPublications(w http.ResponseWriter, r *http.Requ
 
 	ResponseWithJSON(w, jsonPublications)
 }
+
+func InitPublicationsCollection(database *mgo.Database) *mgo.Collection {
+	// если коллекции не будет, то она создасться автоматически
+	collection := database.C("publications")
+
+	if n, _ := collection.Count(); n == 0 {
+		collection.Insert(&Publication{
+			bson.NewObjectId(),
+			2018,
+			"Публикация про монгу",
+		})
+		collection.Insert(&Publication{
+			bson.NewObjectId(),
+			2019,
+			"Публикация про redis",
+		})
+	}
+
+	return collection
+}

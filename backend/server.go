@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
 )
 
 func main() {
@@ -16,11 +15,15 @@ func main() {
 
 	database := session.DB("neurotech")
 
-	publicationCollection := initPublicationsCollection(database)
+	studenWorkCollection := InitStudentWorksCollection(database)
+	studenWorkHandler := &StudentWorkHandler{Collection: studenWorkCollection}
+	http.Handle("/student-work", studenWorkHandler)
+
+	publicationCollection := InitPublicationsCollection(database)
 	publicationHandler := &PublicationHandler{Collection: publicationCollection}
 	http.Handle("/publications", publicationHandler)
 
-	newsCollection := initNewsCollection(database)
+	newsCollection := InitNewsCollection(database)
 	newsHandler := &NewsHandler{Collection: newsCollection}
 	http.Handle("/news", newsHandler)
 
@@ -31,44 +34,4 @@ func main() {
 	http.Handle("/study-materials", studyHandler)
 
 	http.ListenAndServe(":8080", nil)
-}
-
-func initPublicationsCollection(database *mgo.Database) *mgo.Collection {
-	// если коллекции не будет, то она создасться автоматически
-	collection := database.C("publications")
-
-	if n, _ := collection.Count(); n == 0 {
-		collection.Insert(&Publication{
-			bson.NewObjectId(),
-			2018,
-			"Публикация про монгу",
-		})
-		collection.Insert(&Publication{
-			bson.NewObjectId(),
-			2019,
-			"Публикация про redis",
-		})
-	}
-
-	return collection
-}
-
-func initNewsCollection(database *mgo.Database) *mgo.Collection {
-	// если коллекции не будет, то она создасться автоматически
-	collection := database.C("news")
-
-	if n, _ := collection.Count(); n == 0 {
-		collection.Insert(&News{
-			bson.NewObjectId(),
-			"mongodb",
-			"Рассказать про монгу",
-		})
-		collection.Insert(&News{
-			bson.NewObjectId(),
-			"redis",
-			"Рассказать про redis",
-		})
-	}
-
-	return collection
 }
