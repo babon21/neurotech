@@ -14,9 +14,14 @@ func main() {
 	}
 	defer session.Close()
 
-	collection := initDb(session)
+	database := session.DB("neurotech")
 
-	newsHandler := &NewsHandler{News: collection}
+	publicationCollection := initPublicationsCollection(database)
+	publicationHandler := &PublicationHandler{Publication: publicationCollection}
+	http.Handle("/publications", publicationHandler)
+
+	newsCollection := initNewsCollection(database)
+	newsHandler := &NewsHandler{News: newsCollection}
 	http.Handle("/news", newsHandler)
 
 	disciplineHandler := &DisciplineHandler{path: DisciplinePath}
@@ -28,9 +33,29 @@ func main() {
 	http.ListenAndServe(":8080", nil)
 }
 
-func initDb(session *mgo.Session) *mgo.Collection {
+func initPublicationsCollection(database *mgo.Database) *mgo.Collection {
 	// если коллекции не будет, то она создасться автоматически
-	collection := session.DB("neurotech").C("news")
+	collection := database.C("publications")
+
+	if n, _ := collection.Count(); n == 0 {
+		collection.Insert(&Publication{
+			bson.NewObjectId(),
+			2018,
+			"Публикация про монгу",
+		})
+		collection.Insert(&Publication{
+			bson.NewObjectId(),
+			2019,
+			"Публикация про redis",
+		})
+	}
+
+	return collection
+}
+
+func initNewsCollection(database *mgo.Database) *mgo.Collection {
+	// если коллекции не будет, то она создасться автоматически
+	collection := database.C("news")
 
 	if n, _ := collection.Count(); n == 0 {
 		collection.Insert(&News{
