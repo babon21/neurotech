@@ -149,7 +149,7 @@ paths:
       description: Returns a list of news.
       responses:
         "200": # status code
-          description: A JSON array of user names
+          description: A JSON array of news.
           content:
             application/json:
               schema:
@@ -221,10 +221,10 @@ paths:
   /publications:
     get:
       summary: Returns a list of publications.
-      description: Optional extended description in CommonMark or HTML.
+      description: Returns a list of publications.
       responses:
         "200": # status code
-          description: A JSON array of user names
+          description: A JSON array of publications.
           content:
             application/json:
               schema:
@@ -234,42 +234,55 @@ paths:
 
     post:
       summary: Create publication.
-      description: Optional extended description in CommonMark or HTML.
+      description: Create publication.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                year:
+                  type: number
+                content:
+                  type: string
       responses:
         "200": # status code
-          description: A JSON array of user names
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: string
+          description: 
 
     put:
       summary: Update publication.
-      description: Optional extended description in CommonMark or HTML.
+      description: Update publication.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                year:
+                  type: number
+                content:
+                  type: string
       responses:
         "200": # status code
-          description: A JSON array of user names
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: string
+          description:
 
     delete:
       summary: Delete publication.
-      description: Optional extended description in CommonMark or HTML.
+      description: Delete publication.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
       responses:
         "200": # status code
-          description: A JSON array of user names
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: string
+          description:
 
   /student-work:
     get:
