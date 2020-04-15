@@ -7,12 +7,6 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-type News struct {
-	ID      bson.ObjectId `json:"id" bson:"_id"`
-	Title   string        `json:"title" bson:"title"`
-	Content string        `json:"content" bson:"content"`
-}
-
 func main() {
 	session, err := mgo.Dial("mongodb://localhost")
 	if err != nil {
@@ -20,6 +14,21 @@ func main() {
 	}
 	defer session.Close()
 
+	collection := initDb(session)
+
+	newsHandler := &NewsHandler{News: collection}
+	http.Handle("/news", newsHandler)
+
+	disciplineHandler := &DisciplineHandler{path: DisciplinePath}
+	http.Handle("/disciplines", disciplineHandler)
+
+	studyHandler := &StudyMaterialHandler{path: DisciplinePath}
+	http.Handle("/study-materials", studyHandler)
+
+	http.ListenAndServe(":8080", nil)
+}
+
+func initDb(session *mgo.Session) *mgo.Collection {
 	// если коллекции не будет, то она создасться автоматически
 	collection := session.DB("neurotech").C("news")
 
@@ -36,17 +45,5 @@ func main() {
 		})
 	}
 
-	newsHandler := &NewsHandler{
-		path: NewsPath,
-		News: collection,
-	}
-	http.Handle("/news", newsHandler)
-
-	disciplineHandler := &DisciplineHandler{path: DisciplinePath}
-	http.Handle("/disciplines", disciplineHandler)
-
-	studyHandler := &StudyMaterialHandler{path: DisciplinePath}
-	http.Handle("/study-materials", studyHandler)
-
-	http.ListenAndServe(":8080", nil)
+	return collection
 }
