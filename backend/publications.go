@@ -108,7 +108,7 @@ func (h *PublicationHandler) GetPublications(w http.ResponseWriter, r *http.Requ
 		panic(err)
 	}
 
-	jsonNews, err := json.Marshal(publication)
+	jsonPublications, err := json.Marshal(publication)
 	if err != nil {
 		log.Err(err).Msg("json marshall err")
 		return
@@ -116,5 +116,5 @@ func (h *PublicationHandler) GetPublications(w http.ResponseWriter, r *http.Requ
 
 	fmt.Println("Get publications success!")
 
-	ResponseWithJSON(w, jsonNews)
+	ResponseWithJSON(w, jsonPublications)
 }
