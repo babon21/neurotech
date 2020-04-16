@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/babon21/neurotech/backend/request"
 	"github.com/rs/zerolog/log"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -19,10 +20,6 @@ type StudentWork struct {
 
 type StudentWorkHandler struct {
 	Collection *mgo.Collection
-}
-
-type StudentWorkDelete struct {
-	ID bson.ObjectId `json:"id" bson:"_id"`
 }
 
 func (h *StudentWorkHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -62,7 +59,7 @@ func (h *StudentWorkHandler) DeleteStudentWork(w http.ResponseWriter, r *http.Re
 	fmt.Println("Delete student work request!")
 
 	// TODO проверка на bson id
-	var delete StudentWorkDelete
+	var delete request.DeleteRequest
 	err := json.NewDecoder(r.Body).Decode(&delete)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)

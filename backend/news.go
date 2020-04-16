@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/babon21/neurotech/backend/request"
 	"github.com/rs/zerolog/log"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -18,10 +19,6 @@ type News struct {
 
 type NewsHandler struct {
 	Collection *mgo.Collection
-}
-
-type NewsDelete struct {
-	ID bson.ObjectId `json:"id" bson:"_id"`
 }
 
 func (h *NewsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -61,7 +58,7 @@ func (h *NewsHandler) DeleteNews(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Delete news request!")
 
 	// TODO проверка на bson id
-	var delete NewsDelete
+	var delete request.DeleteRequest
 	err := json.NewDecoder(r.Body).Decode(&delete)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
