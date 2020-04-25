@@ -10,9 +10,10 @@
             "request": "launch",
             "mode": "auto",
             "program": "${fileDirname}",
-            "port": 8080,
+            "port": 3001,
             "env": {},
-            "args": []
+            "args": [],
+            "showLog": true,
         }
     ]
 }
