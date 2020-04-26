@@ -7,3 +7,22 @@ services:
     restart: always
     ports:
       - 27017:27017
+  
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: neurotech
+      POSTGRES_PASSWORD: neurotech
+      POSTGRES_DB: neurotech
+    ports:
+      - 5432:5432
+
+  adminer:
+    image: dpage/pgadmin4
+    restart: always
+    environment: 
+      PGADMIN_DEFAULT_EMAIL: admin
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - 8081:80
