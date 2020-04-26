@@ -11,20 +11,25 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/gorilla/sessions"
+	_ "github.com/jackc/pgx/v4/stdlib"
+	"github.com/jmoiron/sqlx"
 	"github.com/volatiletech/authboss"
 	abclientstate "github.com/volatiletech/authboss-clientstate"
 	abrenderer "github.com/volatiletech/authboss-renderer"
 	_ "github.com/volatiletech/authboss/auth"
-	"golang.org/x/crypto/bcrypt"
 
 	"github.com/volatiletech/authboss/defaults"
 
 	"gopkg.in/mgo.v2"
 )
 
+type DbStorer struct {
+	Db *sqlx.DB
+}
+
 var (
 	ab           = authboss.New()
-	database     = NewMemStorer()
+	database     DbStorer
 	sessionStore abclientstate.SessionStorer
 	cookieStore  abclientstate.CookieStorer
 )
@@ -41,16 +46,27 @@ func main() {
 	defer session.Close()
 	databaseSite := session.DB("neurotech")
 
-	password := "super"
-	pass, err := bcrypt.GenerateFromPassword([]byte(password), ab.Config.Modules.BCryptCost)
+	connStr := "host=localhost port=5432 dbname=neurotech user=neurotech password=neurotech"
+	db, err := sqlx.Open("pgx", connStr)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
+	defer db.Close()
+	database = *NewDbStorer(db)
 
-	database.Save(nil, &User{
-		Name:     "Batman",
-		Email:    "kek@mail.ru",
-		Password: string(pass)})
+	// password := "super"
+	// pass, err := bcrypt.GenerateFromPassword([]byte(password), ab.Config.Modules.BCryptCost)
+	// if err != nil {
+	// 	panic(err)
+	// }
+
+	// err = database.Save(nil, &User{
+	// 	Username: "kelan007",
+	// 	Password: string(pass)})
+
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 
 	cookieStoreKey, _ := base64.StdEncoding.DecodeString(`NpEPi8pEjKVjLGJ6kYCS+VTCzi6BUuDzU0wrwXyf5uDPArtlofn2AG6aTMiPmN3C909rsEWMNqJqhIVPGP3Exg==`)
 	sessionStoreKey, _ := base64.StdEncoding.DecodeString(`AbfYwmmt8UCwUuhd9qvfNA9UCuN1cVcKJN1ofbiky6xCyyBj20whe40rJa3Su0WOWLWcPpO1taqJdsEI/65+JA==`)
@@ -130,76 +146,53 @@ func logger(h http.Handler) http.Handler {
 }
 
 type User struct {
-	ID int
-
-	// Non-authboss related field
-	Name string
-
-	// Auth
-	Email    string
+	Username string
 	Password string
 }
 
-func NewMemStorer() *MemStorer {
-	return &MemStorer{
-		Users: map[string]User{
-			"rick@councilofricks.com": {
-				ID:       1,
-				Name:     "Rick",
-				Password: "$2a$10$XtW/BrS5HeYIuOCXYe8DFuInetDMdaarMUJEOg/VA/JAIDgw3l4aG", // pass = 1234
-				Email:    "rick@councilofricks.com",
-			},
-		},
-		Tokens: make(map[string][]string),
-	}
+func NewDbStorer(db *sqlx.DB) *DbStorer {
+	return &DbStorer{Db: db}
 }
 
-type MemStorer struct {
-	Users  map[string]User
-	Tokens map[string][]string
+type StorageOpts struct {
+	ConnString         string
+	MaxConnections     int
+	MaxIdleConnections int
+	ConnLifetime       time.Duration
 }
 
-func (m MemStorer) Save(_ context.Context, user authboss.User) error {
+func (d DbStorer) Save(_ context.Context, user authboss.User) error {
 	u := user.(*User)
-	m.Users[u.Email] = *u
 
-	debugln("Saved user:", u.Name)
+	userInsert := `INSERT INTO users (username, password) VALUES ($1, $2);`
+	_, err := d.Db.Exec(userInsert, u.Username, u.Password)
+	if err != nil {
+		return err
+	}
+
+	debugln("Saved user:", u.Username)
 	return nil
 }
 
-func (m MemStorer) Load(_ context.Context, key string) (user authboss.User, err error) {
-	u, ok := m.Users[key]
-	if !ok {
-		return nil, authboss.ErrUserNotFound
+func (d DbStorer) Load(_ context.Context, key string) (authboss.User, error) {
+	u := User{}
+	err := d.Db.Get(&u, "SELECT * FROM users WHERE username=$1 LIMIT 1", key)
+
+	if err != nil {
+		return nil, err
 	}
 
-	debugln("Loaded user:", u.Name)
+	return &u, nil
+
+	debugln("Loaded user:", u.Username)
 	return &u, nil
 }
 
-// New user creation
-func (m MemStorer) New(_ context.Context) authboss.User {
-	return &User{}
-}
-
-// Create the user
-func (m MemStorer) Create(_ context.Context, user authboss.User) error {
-	u := user.(*User)
-
-	if _, ok := m.Users[u.Email]; ok {
-		return authboss.ErrUserFound
-	}
-
-	debugln("Created new user:", u.Name)
-	m.Users[u.Email] = *u
-	return nil
-}
-
 // GetPID from user
-func (u User) GetPID() string { return u.Email }
+func (u User) GetPID() string { return u.Username }
 
 // PutPID into user
-func (u *User) PutPID(pid string) { u.Email = pid }
+func (u *User) PutPID(pid string) { u.Username = pid }
 
 // PutPassword into user
 func (u *User) PutPassword(password string) { u.Password = password }
