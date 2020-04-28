@@ -5,6 +5,7 @@ go 1.14
 require (
 	github.com/go-chi/chi v4.1.1+incompatible
 	github.com/golang/protobuf v1.4.0 // indirect
+	github.com/gomodule/redigo v2.0.0+incompatible // indirect
 	github.com/gorilla/sessions v1.2.0
 	github.com/jackc/pgx/v4 v4.6.0
 	github.com/jmoiron/sqlx v1.2.0
