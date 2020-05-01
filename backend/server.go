@@ -2,11 +2,13 @@ package main
 
 import (
 	"encoding/base64"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"time"
 
+	"github.com/BurntSushi/toml"
 	"github.com/go-chi/chi"
 	_ "github.com/jackc/pgx/v4/stdlib"
 	"github.com/jmoiron/sqlx"
@@ -14,7 +16,9 @@ import (
 	abclientstate "github.com/volatiletech/authboss-clientstate"
 	abrenderer "github.com/volatiletech/authboss-renderer"
 	_ "github.com/volatiletech/authboss/auth"
-	"golang.org/x/crypto/bcrypt"
+	aboauth "github.com/volatiletech/authboss/oauth2"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 
 	"github.com/volatiletech/authboss/defaults"
 
@@ -34,27 +38,30 @@ var (
 
 const (
 	sessionCookieName = "ab_blog"
+	port = "3000"
 )
 
 const schema = `CREATE TABLE users (
     username text PRIMARY KEY NOT NULL,
-    password text NOT NULL)`
+	password text NULL,
+	oauth2_uid text NULL,
+	oauth2_provider text NULL)`
 
-func registerUser() {
-	password := "super"
-	pass, err := bcrypt.GenerateFromPassword([]byte(password), ab.Config.Modules.BCryptCost)
-	if err != nil {
-		panic(err)
-	}
+// func registerUser() {
+// 	password := "super"
+// 	pass, err := bcrypt.GenerateFromPassword([]byte(password), ab.Config.Modules.BCryptCost)
+// 	if err != nil {
+// 		panic(err)
+// 	}
 
-	err = database.Save(nil, &User{
-		Username: "kelan007",
-		Password: string(pass)})
+// 	err = database.Save(nil, &User{
+// 		UserID: "kelan007",
+// 		Password: string(pass)})
 
-	if err != nil {
-		log.Fatal(err)
-	}
-}
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// }
 
 func initSchema(db *sqlx.DB) {
 	_, err := db.Exec(schema)
@@ -104,25 +111,52 @@ func main() {
 	setSiteHandlers(mux, databaseSite)
 
 	// Start the server
-	port := os.Getenv("PORT")
-	if len(port) == 0 {
-		port = "8002"
-	}
+	// port := os.Getenv("PORT")
+	// if len(port) == 0 {
+		// port = "8002"
+	// }
 	log.Printf("Listening on localhost: %s", port)
 	log.Println(http.ListenAndServe("localhost:"+port, mux))
 }
 
 func setupAuthboss() {
-	ab.Config.Paths.RootURL = "http://localhost:8002"
+	ab.Config.Paths.RootURL = "http://localhost:" + port
 
 	ab.Config.Storage.Server = database
 	ab.Config.Storage.SessionState = sessionStore
 	ab.Config.Storage.CookieState = cookieStore
 
 	ab.Config.Core.ViewRenderer = abrenderer.NewHTML("/auth", "ab_views")
-	// ab.Config.Core.ViewRenderer = defaults.JSONRenderer{}
+	// ab.Config.Core.ViewRenderer = defaults.JSONRenderer{}	
 
 	defaults.SetCore(&ab.Config, false, false)
+
+	oauthcreds := struct {
+		ClientID     string `toml:"client_id"`
+		ClientSecret string `toml:"client_secret"`
+	}{}
+
+	// Set up Google OAuth2 if we have credentials in the
+	// file oauth2.toml for it.
+	_, err := toml.DecodeFile("oauth2.toml", &oauthcreds)
+	if err == nil && len(oauthcreds.ClientID) != 0 && len(oauthcreds.ClientSecret) != 0 {
+		fmt.Println("oauth2.toml exists, configuring google oauth2")
+		ab.Config.Modules.OAuth2Providers = map[string]authboss.OAuth2Provider{
+			"google": {
+				OAuth2Config: &oauth2.Config{
+					ClientID:     oauthcreds.ClientID,
+					ClientSecret: oauthcreds.ClientSecret,
+					Scopes:       []string{`profile`, `email`},
+					Endpoint:     google.Endpoint,
+				},
+				FindUserDetails: aboauth.GoogleUserDetails,
+			},
+		}
+	} else if os.IsNotExist(err) {
+		fmt.Println("oauth2.toml doesn't exist, not registering oauth2 handling")
+	} else {
+		fmt.Println("error loading oauth2.toml:", err)
+	}
 
 	if err := ab.Init(); err != nil {
 		panic(err)
