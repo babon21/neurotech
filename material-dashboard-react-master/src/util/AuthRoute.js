@@ -6,10 +6,7 @@ import PropTypes from 'prop-types';
 const AuthRoute = ({ component: Component, authenticated, ...rest }) => (
   <Route
     {...rest}
-    render={(props) => {
-      console.log('authenticated', authenticated)
-      return authenticated === true ? <Component {...props} /> : <Redirect to="/login" />
-    }
+    render={(props) => authenticated === "true" ? <Component {...props} /> : <Redirect to="/login" />
     }
   />
 );

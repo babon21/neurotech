@@ -4,7 +4,7 @@ import {
 } from '../types';
 
 const initialState = {
-  authenticated: false,
+  authenticated: localStorage.getItem('isAuth') || "false",
   loading: false,
   credentials: {},
   notifications: []
@@ -15,10 +15,13 @@ export default function (state = initialState, action) {
     case SET_AUTHENTICATED:
       return {
         ...state,
-        authenticated: true
+        authenticated: "true"
       };
     case SET_UNAUTHENTICATED:
-      return initialState;
+      return {
+        ...state,
+        authenticated: "false"
+      };
     default:
       return state;
   }

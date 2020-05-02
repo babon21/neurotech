@@ -6,13 +6,22 @@ import PropTypes from 'prop-types';
 const NoAuthRoute = ({ component: Component, authenticated, ...rest }) => (
   <Route
     {...rest}
-    render={(props) => {
-      console.log('from no auth rote, authenticated', authenticated)
-      return authenticated === false ? <Component {...props} /> : <Redirect to="/admin" />
-    }
+    render={(props) => authenticated === "false" ? <Component {...props} /> : <Redirect to="/" />
     }
   />
 );
+
+// function NoAuthRoute({ component: Component, authenticated, ...rest }) {
+//   return (
+//     <Route
+//       {...rest}
+//       render={(props) => {
+//         return authenticated === "false" ? <Component {...props} /> : <Redirect to="/" />
+//       }
+//       }
+//     />
+//   );
+// }
 
 const mapStateToProps = (state) => ({
   authenticated: state.user.authenticated

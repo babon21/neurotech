@@ -6,11 +6,10 @@ import {
 } from '../types';
 import axios from 'axios';
 import qs from 'qs';
-import {hist} from '../../App'
+import { hist } from '../../App'
 
 export const loginUser = (userData) => (dispatch) => {
   const user = qs.stringify({ 'username': userData.username, 'password': userData.password });
-  alert('auth start')
   let myurl = 'http://localhost:8002/auth/login'
   axios({
     method: 'post',
@@ -22,29 +21,28 @@ export const loginUser = (userData) => (dispatch) => {
       console.log('there are some error')
       alert(res.data.error)
       hist.push("/login")
-      dispatch( {
+      dispatch({
         type: SET_ERRORS,
       })
+      return
     }
 
-    dispatch( {
+    dispatch({
       type: SET_AUTHENTICATED,
       payload: userData
     })
-    alert("auth success then /admin push")
     hist.push("/admin")
+    localStorage.setItem("isAuth", true)
   }).catch((err) => {
-    alert("auth catch fail")
     hist.push("/login")
-    dispatch( {
+    dispatch({
       type: SET_ERRORS,
     })
   });
 };
 
 export const logoutUser = () => (dispatch) => {
-  // localStorage.removeItem('FBIdToken');
-  // delete axios.defaults.headers.common['Authorization'];
+  localStorage.setItem('isAuth', 'false')
   dispatch({ type: SET_UNAUTHENTICATED });
   hist.push("/login")
 };

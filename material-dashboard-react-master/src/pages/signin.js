@@ -41,7 +41,6 @@ function SignIn(props) {
       username: credentials.username,
       password: credentials.password
     };
-    alert("submit!")
     props.loginUser(userData);
   };
 
