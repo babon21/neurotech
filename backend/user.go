@@ -36,12 +36,9 @@ func (d DbStorer) Load(_ context.Context, key string) (authboss.User, error) {
 	err := d.Db.Get(&u, "SELECT * FROM users WHERE username=$1 LIMIT 1", key)
 
 	if err != nil {
-		return nil, err
+		return nil, authboss.ErrUserNotFound
 	}
 
-	return &u, nil
-
-	debugln("Loaded user:", u.Username)
 	return &u, nil
 }
 

@@ -12,7 +12,6 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/volatiletech/authboss"
 	abclientstate "github.com/volatiletech/authboss-clientstate"
-	abrenderer "github.com/volatiletech/authboss-renderer"
 	_ "github.com/volatiletech/authboss/auth"
 	"golang.org/x/crypto/bcrypt"
 
@@ -119,10 +118,16 @@ func setupAuthboss() {
 	ab.Config.Storage.SessionState = sessionStore
 	ab.Config.Storage.CookieState = cookieStore
 
-	ab.Config.Core.ViewRenderer = abrenderer.NewHTML("/auth", "ab_views")
-	// ab.Config.Core.ViewRenderer = defaults.JSONRenderer{}
+	// ab.Config.Core.ViewRenderer = abrenderer.NewHTML("/auth", "ab_views")
+	ab.Config.Core.ViewRenderer = defaults.JSONRenderer{}
+	ab.Paths.AuthLoginOK = "http://localhost:3000/"
 
 	defaults.SetCore(&ab.Config, false, false)
+
+
+	ab.Config.Core.BodyReader = defaults.HTTPBodyReader{
+		UseUsername: true,
+	}
 
 	if err := ab.Init(); err != nil {
 		panic(err)
