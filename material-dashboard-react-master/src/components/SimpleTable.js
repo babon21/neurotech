@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import classnames from "classnames";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
-import Checkbox from "@material-ui/core/Checkbox";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 import Table from "@material-ui/core/Table";
@@ -13,7 +12,6 @@ import TableCell from "@material-ui/core/TableCell";
 // @material-ui/icons
 import Edit from "@material-ui/icons/Edit";
 import Close from "@material-ui/icons/Close";
-import Check from "@material-ui/icons/Check";
 // core components
 import styles from "assets/jss/material-dashboard-react/components/tasksStyle.js";
 
@@ -41,19 +39,6 @@ export default function Tasks(props) {
       <TableBody>
         {tasksIndexes.map(value => (
           <TableRow key={value} className={classes.tableRow}>
-            <TableCell className={tableCellClasses}>
-              <Checkbox
-                checked={checked.indexOf(value) !== -1}
-                tabIndex={-1}
-                onClick={() => handleToggle(value)}
-                checkedIcon={<Check className={classes.checkedIcon} />}
-                icon={<Check className={classes.uncheckedIcon} />}
-                classes={{
-                  checked: classes.checked,
-                  root: classes.root
-                }}
-              />
-            </TableCell>
             <TableCell className={tableCellClasses}>{tasks[value]}</TableCell>
             <TableCell className={classes.tableActions}>
               <Tooltip

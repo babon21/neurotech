@@ -11,6 +11,7 @@ import login from "./pages/signin"
 // Redux
 import { Provider } from 'react-redux';
 import store from './redux/store';
+import StudyMaterialsList from "views/StudyMaterialsList";
 
 export const hist = createBrowserHistory();
 
@@ -23,6 +24,7 @@ class App extends Component {
                 <AuthRoute path="/admin" component={Admin} />
                 <NoAuthRoute exact path="/login" component={login} />
                 <Redirect from="/" to="/admin/dashboard" />
+                <AuthRoute exact path="/admin/study-materials/0" component={StudyMaterialsList} />
               </Switch>
           </Router>
         </Provider>

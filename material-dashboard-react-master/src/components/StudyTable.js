@@ -9,26 +9,30 @@ import { makeStyles } from "@material-ui/core/styles";
 // core components
 import Card from "components/Card/Card.js";
 import CardBody from "components/Card/CardBody.js";
+import CardHeader from "components/Card/CardHeader.js";
 
 import styles from "assets/jss/material-dashboard-react/components/customTabsStyle.js";
 
 const useStyles = makeStyles(styles);
 
-export default function CustomTabs(props) {
+export default function CustomTable(props) {
   const [value, setValue] = React.useState(0);
   const handleChange = (event, value) => {
     setValue(value);
   };
   const classes = useStyles();
-  const { headerColor, plainTabs, tabs, title, rtlActive } = props;
+  const { headerColor, plainTabs, tables, title, rtlActive } = props;
   const cardTitle = classNames({
     [classes.cardTitle]: true,
     [classes.cardTitleRTL]: rtlActive
   });
   return (
     <Card plain={plainTabs}>
+      <CardHeader color={headerColor} plain={plainTabs}>
+        {title !== undefined ? <div className={cardTitle}>{title}</div> : null}
+      </CardHeader>
       <CardBody>
-        {tabs.map((prop, key) => {
+        {tables.map((prop, key) => {
           if (key === value) {
             return <div key={key}>{prop.tabContent}</div>;
           }
@@ -39,7 +43,7 @@ export default function CustomTabs(props) {
   );
 }
 
-CustomTabs.propTypes = {
+CustomTable.propTypes = {
   headerColor: PropTypes.oneOf([
     "warning",
     "success",
