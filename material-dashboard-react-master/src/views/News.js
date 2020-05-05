@@ -4,38 +4,71 @@ import GridItem from "components/Grid/GridItem.js";
 import GridContainer from "components/Grid/GridContainer.js";
 import Button from "components/CustomButtons/Button.js";
 import CustomTabs from "components/CustomTabs/CustomTabs.js";
-import Tasks from "components/SimpleTable.js";
+import SimpleTable from "components/SimpleTable.js";
 
-var bugs = [
-  'Sign contract for "What are conference organizers afraid of?"',
-  "Lines From Great Russian Literature? Or E-mails From My Boss?",
-  "Flooded: One year later, assessing what was lost and what was found when a ravaging rain swept through metro Detroit",
-  "Create 4 Invisible User Experiences you Never Knew About"
-];
+import { connect } from 'react-redux';
+import { getNews } from '../redux/actions/newsActions'
 
-export default function News() {
+
+function News(props) {
+
+  function handleEdit(e, id) {
+    alert("edit alert, id:" + id)
+  }
+
+  function handleRemove(e, id) {
+    alert("remove alert, id:" + id)
+  }
+
+  function getNews() {
+    if (Array.isArray(props.news.news) && props.news.news.length === 0) {
+      props.getNews()
+    }
+  
+    return {
+      tabContent: (
+        <SimpleTable
+          handleEdit={handleEdit}
+          handleRemove={handleRemove}
+          tasksIndexes={[0, 1]}
+          tasks={props.news.news}
+        />
+      )
+    }
+  }
+
+  function handleAdd(e) {
+
+  }
 
   return (
     <GridContainer>
       <GridItem xs={12} sm={12} md={12}>
-        <Button color="primary">Добавить</Button>
+        <Button color="primary" onClick={handleAdd}>Добавить</Button>
       </GridItem>
       <GridItem xs={12} sm={12} md={12}>
         <CustomTabs
           headerColor="primary"
           tabs={[
-            {
-              tabContent: (
-                <Tasks
-                  checkedIndexes={[0, 3]}
-                  tasksIndexes={[0, 1, 2, 3]}
-                  tasks={bugs}
-                />
-              )
-            }
+            getNews()
           ]}
         />
       </GridItem>
     </GridContainer>
   );
 }
+
+function mapStateToProps(state) {
+  return {
+    news: state.news
+  };
+}
+
+const mapActionsToProps = {
+  getNews
+};
+
+export default connect(
+  mapStateToProps,
+  mapActionsToProps
+)(News);

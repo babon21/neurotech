@@ -17,20 +17,10 @@ import styles from "assets/jss/material-dashboard-react/components/tasksStyle.js
 
 const useStyles = makeStyles(styles);
 
-export default function Tasks(props) {
+export default function SimpleTable(props) {
   const classes = useStyles();
-  const [checked, setChecked] = React.useState([...props.checkedIndexes]);
-  const handleToggle = value => {
-    const currentIndex = checked.indexOf(value);
-    const newChecked = [...checked];
-    if (currentIndex === -1) {
-      newChecked.push(value);
-    } else {
-      newChecked.splice(currentIndex, 1);
-    }
-    setChecked(newChecked);
-  };
-  const { tasksIndexes, tasks, rtlActive } = props;
+  
+  const { tasksIndexes, tasks, rtlActive, handleEdit, handleRemove } = props;
   const tableCellClasses = classnames(classes.tableCell, {
     [classes.tableCellRTL]: rtlActive
   });
@@ -43,13 +33,14 @@ export default function Tasks(props) {
             <TableCell className={classes.tableActions}>
               <Tooltip
                 id="tooltip-top"
-                title="Edit Task"
+                title="Редактировать"
                 placement="top"
                 classes={{ tooltip: classes.tooltip }}
               >
                 <IconButton
                   aria-label="Edit"
                   className={classes.tableActionButton}
+                  onClick={(e) => handleEdit(e, value) }
                 >
                   <Edit
                     className={
@@ -60,13 +51,14 @@ export default function Tasks(props) {
               </Tooltip>
               <Tooltip
                 id="tooltip-top-start"
-                title="Remove"
+                title="Удалить"
                 placement="top"
                 classes={{ tooltip: classes.tooltip }}
               >
                 <IconButton
                   aria-label="Close"
                   className={classes.tableActionButton}
+                  onClick={(e) => handleRemove(e, value) }
                 >
                   <Close
                     className={
@@ -83,7 +75,7 @@ export default function Tasks(props) {
   );
 }
 
-Tasks.propTypes = {
+SimpleTable.propTypes = {
   tasksIndexes: PropTypes.arrayOf(PropTypes.number),
   tasks: PropTypes.arrayOf(PropTypes.node),
   rtlActive: PropTypes.bool,

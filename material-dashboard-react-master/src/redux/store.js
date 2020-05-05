@@ -2,6 +2,7 @@ import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import userReducer from './reducers/userReducer';
 import { composeWithDevTools } from 'remote-redux-devtools'
 import thunk from 'redux-thunk';
+import newsReducer from './reducers/newsReducer';
 
 const initialState = {};
 
@@ -9,6 +10,7 @@ const middleware = [thunk];
 
 const reducers = combineReducers({
   user: userReducer,
+  news: newsReducer,
 });
 
 const composeEnhancers = composeWithDevTools({
