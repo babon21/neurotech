@@ -4,6 +4,7 @@ import simpleRestProvider from 'ra-data-simple-rest';
 import { NewsList, NewsEdit, NewsCreate } from './news';
 import { PublicationList, PublicationEdit, PublicationCreate } from './publications';
 import { StudentWorkList, StudentWorkEdit, StudentWorkCreate } from './studentWorks';
+import { DisciplinesList, DisciplineEdit, DisciplineCreate } from './disciplines';
 import authProvider from './authProvider';
 
 
@@ -12,7 +13,8 @@ const App = () => (
   <Admin dataProvider={dataProvider} authProvider={authProvider}>
     <Resource name="news" list={NewsList} edit={NewsEdit} create={NewsCreate} />
     <Resource name="publications" list={PublicationList} edit={PublicationEdit} create={PublicationCreate} />
-    <Resource name="student-work" list={StudentWorkList} edit={StudentWorkEdit} create={StudentWorkCreate} />
+    <Resource name="student-works" list={StudentWorkList} edit={StudentWorkEdit} create={StudentWorkCreate} />
+    <Resource name="disciplines" list={DisciplinesList} edit={DisciplineEdit} create={DisciplineCreate} />
   </Admin>
 );
 export default App;
