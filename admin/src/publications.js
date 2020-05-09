@@ -19,7 +19,7 @@ export const PublicationEdit = props => (
     <Edit title={<PublicationTitle />} {...props}>
         <SimpleForm>
             <TextInput disabled source="id" />
-            <TextInput source="year" />
+            <NumberInput source="year" />
             <TextInput multiline source="title" />
         </SimpleForm>
     </Edit>
