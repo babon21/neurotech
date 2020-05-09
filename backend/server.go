@@ -100,19 +100,21 @@ func main() {
 		mux.Mount("/auth", http.StripPrefix("/auth", ab.Config.Core.Router))
 	})
 
-	setSiteHandlers(mux, databaseSite)
+	newsCollection := InitNewsCollection(databaseSite)
+	newsHandler := &NewsHandler{Collection: newsCollection}
+	setNewsRouter(mux, newsHandler)
 
 	// Start the server
 	port := os.Getenv("PORT")
 	if len(port) == 0 {
-		port = "8002"
+		port = "8080"
 	}
 	log.Printf("Listening on localhost: %s", port)
 	log.Println(http.ListenAndServe("localhost:"+port, mux))
 }
 
 func setupAuthboss() {
-	ab.Config.Paths.RootURL = "http://localhost:8002"
+	ab.Config.Paths.RootURL = "http://localhost:8080"
 
 	ab.Config.Storage.Server = database
 	ab.Config.Storage.SessionState = sessionStore
@@ -124,7 +126,6 @@ func setupAuthboss() {
 
 	defaults.SetCore(&ab.Config, false, false)
 
-
 	ab.Config.Core.BodyReader = defaults.HTTPBodyReader{
 		UseUsername: true,
 	}
@@ -134,27 +135,45 @@ func setupAuthboss() {
 	}
 }
 
-func setSiteHandlers(mux *chi.Mux, databaseSite *mgo.Database) {
-	mux.Group(func(mux chi.Router) {
-		mux.Use(authboss.Middleware2(ab, authboss.RequireNone, authboss.RespondUnauthorized))
+func setNewsRouter(r *chi.Mux, newsHandler *NewsHandler) {
 
-		studenWorkCollection := InitStudentWorksCollection(databaseSite)
-		studenWorkHandler := &StudentWorkHandler{Collection: studenWorkCollection}
+	r.Route("/news", func(r chi.Router) {
+		r.Get("/", newsHandler.GetNewsList)
 
-		publicationCollection := InitPublicationsCollection(databaseSite)
-		publicationHandler := &PublicationHandler{Collection: publicationCollection}
+		r.Group(func(r chi.Router) {
+			r.Use(authboss.Middleware2(ab, authboss.RequireNone, authboss.RespondUnauthorized))
+			r.Post("/", newsHandler.CreateNews) // POST /articles
+			r.With().Route("/{newsID}", func(r chi.Router) {
+				r.Get("/", newsHandler.GetOneNews)    // GET /news/123
+				r.Put("/", newsHandler.UpdateNews)    // PUT /news/123
+				r.Delete("/", newsHandler.DeleteNews) // DELETE /news/123
+			})
+		})
+	})
+}
 
-		newsCollection := InitNewsCollection(databaseSite)
-		newsHandler := &NewsHandler{Collection: newsCollection}
+func setAuthRoute(r *chi.Mux, databaseSite *mgo.Database) {
 
-		disciplineHandler := &DisciplineHandler{path: DisciplinePath}
-		studyHandler := &StudyMaterialHandler{path: DisciplinePath}
+	r.Group(func(mux chi.Router) {
+		// mux.Use(authboss.Middleware2(ab, authboss.RequireNone, authboss.RespondUnauthorized))
 
-		mux.Handle("/publications", publicationHandler)
-		mux.Handle("/student-work", studenWorkHandler)
-		mux.Handle("/news", newsHandler)
-		mux.Handle("/disciplines", disciplineHandler)
-		mux.Handle("/study-materials", studyHandler)
+		// studenWorkCollection := InitStudentWorksCollection(databaseSite)
+		// studenWorkHandler := &StudentWorkHandler{Collection: studenWorkCollection}
+
+		// publicationCollection := InitPublicationsCollection(databaseSite)
+		// publicationHandler := &PublicationHandler{Collection: publicationCollection}
+
+		// newsCollection := InitNewsCollection(databaseSite)
+		// newsHandler := &NewsHandler{Collection: newsCollection}
+
+		// disciplineHandler := &DisciplineHandler{path: DisciplinePath}
+		// studyHandler := &StudyMaterialHandler{path: DisciplinePath}
+
+		// r.Handle("/publications", publicationHandler)
+		// r.Handle("/student-work", studenWorkHandler)
+		// r.Handle("/news", newsHandler)
+		// r.Handle("/disciplines", disciplineHandler)
+		// r.Handle("/study-materials", studyHandler)
 	})
 }
 
