@@ -107,6 +107,10 @@ func main() {
 	publicationHandler := &PublicationHandler{Collection: publicationCollection}
 	setPublicationsRouter(mux, publicationHandler)
 
+	studenWorkCollection := InitStudentWorksCollection(databaseSite)
+	studenWorkHandler := &StudentWorkHandler{Collection: studenWorkCollection}
+	setStudentWorksRouter(mux, studenWorkHandler)
+
 	// Start the server
 	port := os.Getenv("PORT")
 	if len(port) == 0 {
@@ -171,23 +175,28 @@ func setPublicationsRouter(r *chi.Mux, publicationsHandler *PublicationHandler) 
 	})
 }
 
+func setStudentWorksRouter(r *chi.Mux, studentWorkHandler *StudentWorkHandler) {
+	r.Route("/student-work", func(r chi.Router) {
+		r.Get("/", studentWorkHandler.GetStudentWorkList)
+
+		r.Group(func(r chi.Router) {
+			r.Use(authboss.Middleware2(ab, authboss.RequireNone, authboss.RespondUnauthorized))
+			r.Post("/", studentWorkHandler.CreateStudentWork) // POST /publications
+			r.With().Route("/{id}", func(r chi.Router) {
+				r.Get("/", studentWorkHandler.GetOneStudentWork)    // GET /publications/123
+				r.Put("/", studentWorkHandler.UpdateStudentWork)    // PUT /publications/123
+				r.Delete("/", studentWorkHandler.DeleteStudentWork) // DELETE /publications/123
+			})
+		})
+	})
+}
+
 func setAuthRoute(r *chi.Mux, databaseSite *mgo.Database) {
 
 	r.Group(func(mux chi.Router) {
-		// mux.Use(authboss.Middleware2(ab, authboss.RequireNone, authboss.RespondUnauthorized))
-
-		// studenWorkCollection := InitStudentWorksCollection(databaseSite)
-		// studenWorkHandler := &StudentWorkHandler{Collection: studenWorkCollection}
-
-		// newsCollection := InitNewsCollection(databaseSite)
-		// newsHandler := &NewsHandler{Collection: newsCollection}
-
 		// disciplineHandler := &DisciplineHandler{path: DisciplinePath}
 		// studyHandler := &StudyMaterialHandler{path: DisciplinePath}
 
-		// r.Handle("/publications", publicationHandler)
-		// r.Handle("/student-work", studenWorkHandler)
-		// r.Handle("/news", newsHandler)
 		// r.Handle("/disciplines", disciplineHandler)
 		// r.Handle("/study-materials", studyHandler)
 	})

@@ -6,51 +6,30 @@ import (
 	"net/http"
 
 	"github.com/babon21/neurotech/backend/request"
+	"github.com/go-chi/chi"
 	"github.com/rs/zerolog/log"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
 
 type StudentWork struct {
-	ID          bson.ObjectId `json:"id" bson:"_id"`
-	Student     string
-	Year        int32  `json:"year" bson:"year"`
-	Description string `json:"description" bson:"description"`
+	ID      bson.ObjectId `json:"id" bson:"_id"`
+	Student string        `json:"student" bson:"student"`
+	Year    int32         `json:"year" bson:"year"`
+	Title   string        `json:"title" bson:"title"`
 }
 
 type StudentWorkHandler struct {
 	Collection *mgo.Collection
 }
 
-func (h *StudentWorkHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodPost:
-		h.CreateStudentWork(w, r)
-	case http.MethodDelete:
-		h.DeleteStudentWork(w, r)
-	case http.MethodPut:
-		h.EditStudentWork(w, r)
-	case http.MethodGet:
-		h.GetStudentWorkList(w, r)
-	}
-}
-
 func (h *StudentWorkHandler) CreateStudentWork(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Create student work request!")
 
 	var studentWork StudentWork
-	err := json.NewDecoder(r.Body).Decode(&studentWork)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
+	request.Decode(w, r.Body, &studentWork)
 	studentWork.ID = bson.NewObjectId()
-	err2 := h.Collection.Insert(studentWork)
-	if err2 != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
+	request.CreateOne(w, h.Collection, &studentWork)
 
 	fmt.Println("Create student work success!")
 }
@@ -58,24 +37,12 @@ func (h *StudentWorkHandler) CreateStudentWork(w http.ResponseWriter, r *http.Re
 func (h *StudentWorkHandler) DeleteStudentWork(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Delete student work request!")
 
-	// TODO проверка на bson id
-	var delete request.DeleteRequest
-	err := json.NewDecoder(r.Body).Decode(&delete)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	err2 := h.Collection.Remove(bson.M{"_id": delete.ID})
-	if err2 != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
+	request.DeleteById(w, r, h.Collection)
 
 	fmt.Println("Delete student work success!")
 }
 
-func (h *StudentWorkHandler) EditStudentWork(w http.ResponseWriter, r *http.Request) {
+func (h *StudentWorkHandler) UpdateStudentWork(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Edit student work request!")
 
 	// TODO проверка на bson id
@@ -93,28 +60,33 @@ func (h *StudentWorkHandler) EditStudentWork(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
+	jsonWork, err := json.Marshal(studentWork)
+	if err != nil {
+		log.Err(err).Msg("json marshall err")
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Write(jsonWork)
 	fmt.Println("Edit student work success!")
 }
 
 func (h *StudentWorkHandler) GetStudentWorkList(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Get student work list request!")
 
-	studentWork := []*StudentWork{}
-	// bson.M{} - это типа условия для поиска
-	err := h.Collection.Find(bson.M{}).All(&studentWork)
-	if err != nil {
-		panic(err)
-	}
-
-	// jsonStudentWorks, err := json.Marshal(studentWork)
-	if err != nil {
-		log.Err(err).Msg("json marshall err")
-		return
-	}
+	list := []*StudentWork{}
+	rangeParam := r.URL.Query().Get("range")
+	// need check to rangeParam
+	request.GetList(w, h.Collection, rangeParam, &list)
 
 	fmt.Println("Get student work list success!")
+}
 
-	// ResponseWithJSON(w, jsonStudentWorks)
+func (h *StudentWorkHandler) GetOneStudentWork(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	fmt.Println("Get one student work request! id: ", id)
+	work := &StudentWork{}
+	request.GetOne(w, h.Collection, id, &work)
 }
 
 func InitStudentWorksCollection(database *mgo.Database) *mgo.Collection {

@@ -49,7 +49,7 @@ func GetList(w http.ResponseWriter, c *mgo.Collection, rangeStr string, list int
 	if rangeStr != "" {
 		GetWithPagination(c, rangeStr, list)
 	} else {
-		err := c.Find(bson.M{}).All(&list)
+		err := c.Find(bson.M{}).All(list)
 		if err != nil {
 			panic(err)
 		}
