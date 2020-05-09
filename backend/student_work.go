@@ -106,7 +106,7 @@ func (h *StudentWorkHandler) GetStudentWorkList(w http.ResponseWriter, r *http.R
 		panic(err)
 	}
 
-	jsonStudentWorks, err := json.Marshal(studentWork)
+	// jsonStudentWorks, err := json.Marshal(studentWork)
 	if err != nil {
 		log.Err(err).Msg("json marshall err")
 		return
@@ -114,7 +114,7 @@ func (h *StudentWorkHandler) GetStudentWorkList(w http.ResponseWriter, r *http.R
 
 	fmt.Println("Get student work list success!")
 
-	ResponseWithJSON(w, jsonStudentWorks)
+	// ResponseWithJSON(w, jsonStudentWorks)
 }
 
 func InitStudentWorksCollection(database *mgo.Database) *mgo.Collection {

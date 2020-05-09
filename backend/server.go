@@ -78,7 +78,6 @@ func main() {
 	defer db.Close()
 	database = *NewDbStorer(db)
 
-	
 	// initSchema(db)
 	// registerUser()
 
@@ -103,6 +102,10 @@ func main() {
 	newsCollection := InitNewsCollection(databaseSite)
 	newsHandler := &NewsHandler{Collection: newsCollection}
 	setNewsRouter(mux, newsHandler)
+
+	publicationCollection := InitPublicationsCollection(databaseSite)
+	publicationHandler := &PublicationHandler{Collection: publicationCollection}
+	setPublicationsRouter(mux, publicationHandler)
 
 	// Start the server
 	port := os.Getenv("PORT")
@@ -143,10 +146,26 @@ func setNewsRouter(r *chi.Mux, newsHandler *NewsHandler) {
 		r.Group(func(r chi.Router) {
 			r.Use(authboss.Middleware2(ab, authboss.RequireNone, authboss.RespondUnauthorized))
 			r.Post("/", newsHandler.CreateNews) // POST /articles
-			r.With().Route("/{newsID}", func(r chi.Router) {
+			r.With().Route("/{id}", func(r chi.Router) {
 				r.Get("/", newsHandler.GetOneNews)    // GET /news/123
 				r.Put("/", newsHandler.UpdateNews)    // PUT /news/123
 				r.Delete("/", newsHandler.DeleteNews) // DELETE /news/123
+			})
+		})
+	})
+}
+
+func setPublicationsRouter(r *chi.Mux, publicationsHandler *PublicationHandler) {
+	r.Route("/publications", func(r chi.Router) {
+		r.Get("/", publicationsHandler.GetPublicationsList)
+
+		r.Group(func(r chi.Router) {
+			r.Use(authboss.Middleware2(ab, authboss.RequireNone, authboss.RespondUnauthorized))
+			r.Post("/", publicationsHandler.CreatePublication) // POST /publications
+			r.With().Route("/{id}", func(r chi.Router) {
+				r.Get("/", publicationsHandler.GetOnePublication)    // GET /publications/123
+				r.Put("/", publicationsHandler.UpdatePublication)    // PUT /publications/123
+				r.Delete("/", publicationsHandler.DeletePublication) // DELETE /publications/123
 			})
 		})
 	})
@@ -159,9 +178,6 @@ func setAuthRoute(r *chi.Mux, databaseSite *mgo.Database) {
 
 		// studenWorkCollection := InitStudentWorksCollection(databaseSite)
 		// studenWorkHandler := &StudentWorkHandler{Collection: studenWorkCollection}
-
-		// publicationCollection := InitPublicationsCollection(databaseSite)
-		// publicationHandler := &PublicationHandler{Collection: publicationCollection}
 
 		// newsCollection := InitNewsCollection(databaseSite)
 		// newsHandler := &NewsHandler{Collection: newsCollection}
