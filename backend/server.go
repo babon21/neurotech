@@ -111,6 +111,10 @@ func main() {
 	studenWorkHandler := &StudentWorkHandler{Collection: studenWorkCollection}
 	setStudentWorksRouter(mux, studenWorkHandler)
 
+	disciplineCollection := InitDisciplineCollection(databaseSite)
+	disciplineHandler := &DisciplineHandler{Collection: disciplineCollection}
+	setDisciplineRouter(mux, disciplineHandler)
+
 	// Start the server
 	port := os.Getenv("PORT")
 	if len(port) == 0 {
@@ -176,16 +180,32 @@ func setPublicationsRouter(r *chi.Mux, publicationsHandler *PublicationHandler) 
 }
 
 func setStudentWorksRouter(r *chi.Mux, studentWorkHandler *StudentWorkHandler) {
-	r.Route("/student-work", func(r chi.Router) {
+	r.Route("/student-works", func(r chi.Router) {
 		r.Get("/", studentWorkHandler.GetStudentWorkList)
 
 		r.Group(func(r chi.Router) {
 			r.Use(authboss.Middleware2(ab, authboss.RequireNone, authboss.RespondUnauthorized))
-			r.Post("/", studentWorkHandler.CreateStudentWork) // POST /publications
+			r.Post("/", studentWorkHandler.CreateStudentWork) // POST /student-works
 			r.With().Route("/{id}", func(r chi.Router) {
-				r.Get("/", studentWorkHandler.GetOneStudentWork)    // GET /publications/123
-				r.Put("/", studentWorkHandler.UpdateStudentWork)    // PUT /publications/123
-				r.Delete("/", studentWorkHandler.DeleteStudentWork) // DELETE /publications/123
+				r.Get("/", studentWorkHandler.GetOneStudentWork)    // GET /student-works/123
+				r.Put("/", studentWorkHandler.UpdateStudentWork)    // PUT /student-works/123
+				r.Delete("/", studentWorkHandler.DeleteStudentWork) // DELETE /student-works/123
+			})
+		})
+	})
+}
+
+func setDisciplineRouter(r *chi.Mux, disciplinesHandler *DisciplineHandler) {
+	r.Route("/disciplines", func(r chi.Router) {
+		r.Get("/", disciplinesHandler.GetDisciplineList)
+
+		r.Group(func(r chi.Router) {
+			r.Use(authboss.Middleware2(ab, authboss.RequireNone, authboss.RespondUnauthorized))
+			r.Post("/", disciplinesHandler.CreateDiscipline) // POST /disciplines
+			r.With().Route("/{id}", func(r chi.Router) {
+				r.Get("/", disciplinesHandler.GetOneDiscipline)    // GET /disciplines/123
+				r.Put("/", disciplinesHandler.UpdateDiscipline)    // PUT /disciplines/123
+				r.Delete("/", disciplinesHandler.DeleteDiscipline) // DELETE /disciplines/123
 			})
 		})
 	})
@@ -194,10 +214,7 @@ func setStudentWorksRouter(r *chi.Mux, studentWorkHandler *StudentWorkHandler) {
 func setAuthRoute(r *chi.Mux, databaseSite *mgo.Database) {
 
 	r.Group(func(mux chi.Router) {
-		// disciplineHandler := &DisciplineHandler{path: DisciplinePath}
 		// studyHandler := &StudyMaterialHandler{path: DisciplinePath}
-
-		// r.Handle("/disciplines", disciplineHandler)
 		// r.Handle("/study-materials", studyHandler)
 	})
 }
