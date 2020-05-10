@@ -1,11 +1,10 @@
 import React from 'react';
-import { List, Datagrid, TextField, Create, Edit, TextInput, SimpleForm } from 'react-admin';
-
+import { List, Datagrid, TextField, Create, Edit, TextInput, SimpleForm, RichTextField } from 'react-admin';
 
 
 export const NewsList = props => (
     <List {...props}>
-        <Datagrid rowClick="edit">
+        <Datagrid rowClick="show">
             <TextField source="title" sortable={false}/>
             <TextField source="content" sortable={false}/>
         </Datagrid>
