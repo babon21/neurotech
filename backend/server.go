@@ -112,7 +112,10 @@ func main() {
 	setStudentWorksRouter(mux, studenWorkHandler)
 
 	disciplineCollection := InitDisciplineCollection(databaseSite)
-	disciplineHandler := &DisciplineHandler{Collection: disciplineCollection}
+	disciplineHandler := &DisciplineHandler{
+		Collection: disciplineCollection,
+		Path: "disciplines/",
+	}
 	setDisciplineRouter(mux, disciplineHandler)
 
 	// Start the server
@@ -147,7 +150,6 @@ func setupAuthboss() {
 }
 
 func setNewsRouter(r *chi.Mux, newsHandler *NewsHandler) {
-
 	r.Route("/news", func(r chi.Router) {
 		r.Get("/", newsHandler.GetNewsList)
 
@@ -203,19 +205,12 @@ func setDisciplineRouter(r *chi.Mux, disciplinesHandler *DisciplineHandler) {
 			r.Use(authboss.Middleware2(ab, authboss.RequireNone, authboss.RespondUnauthorized))
 			r.Post("/", disciplinesHandler.CreateDiscipline) // POST /disciplines
 			r.With().Route("/{id}", func(r chi.Router) {
-				r.Get("/", disciplinesHandler.GetOneDiscipline)    // GET /disciplines/123
-				r.Put("/", disciplinesHandler.UpdateDiscipline)    // PUT /disciplines/123
-				r.Delete("/", disciplinesHandler.DeleteDiscipline) // DELETE /disciplines/123
+				r.Get("/", disciplinesHandler.GetOneDiscipline)            // GET /disciplines/123
+				r.Put("/", disciplinesHandler.UpdateDiscipline)            // PUT /disciplines/123
+				r.Delete("/", disciplinesHandler.DeleteDiscipline)         // DELETE /disciplines/123
+				r.Post("/files", disciplinesHandler.UploadDisciplineFiles) // PUT /disciplines/123
 			})
 		})
-	})
-}
-
-func setAuthRoute(r *chi.Mux, databaseSite *mgo.Database) {
-
-	r.Group(func(mux chi.Router) {
-		// studyHandler := &StudyMaterialHandler{path: DisciplinePath}
-		// r.Handle("/study-materials", studyHandler)
 	})
 }
 
