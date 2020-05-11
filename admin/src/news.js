@@ -1,5 +1,5 @@
 import React from 'react';
-import { List, Datagrid, TextField, Create, Edit, TextInput, SimpleForm, RichTextField } from 'react-admin';
+import { List, Datagrid, TextField, Create, Edit, TextInput, SimpleForm } from 'react-admin';
 
 
 export const NewsList = props => (

@@ -39,6 +39,10 @@ const customDataProvider = {
             return dataProvider.create(resource, params);
         }       
 
+        if (params.data.hasOwnProperty('files') === false) {
+            return dataProvider.create(resource, params);
+        }
+
         var files = null
         for (let i = 0; i < params.data.files.length; i++) {
             if (params.data.files[i].hasOwnProperty('rawFile') === true) {
