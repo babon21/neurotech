@@ -16,10 +16,10 @@ import (
 )
 
 type Discipline struct {
-	ID    bson.ObjectId `json:"id" bson:"_id"`
-	Name  string        `json:"name" bson:"name"`
-	Files []File        `json:"files" bson:"files"`
-	Tag   string        `json:"tag" bson:"tag"`
+	ID                bson.ObjectId `json:"id" bson:"_id"`
+	Name              string        `json:"name" bson:"name"`
+	Files             []File        `json:"files" bson:"files"`
+	IsCurrentSemester bool          `json:"is_current_semester" bson:"is_current_semester"`
 }
 
 type File struct {
