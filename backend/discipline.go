@@ -23,7 +23,7 @@ type Discipline struct {
 
 type File struct {
 	Url  string `json:"url" bson:"url"`
-	Desc string `json:"desc" bson:"desc"`
+	Name string `json:"name" bson:"name"`
 }
 
 type DisciplineHandler struct {
@@ -86,8 +86,14 @@ func (h *DisciplineHandler) UpdateDiscipline(w http.ResponseWriter, r *http.Requ
 	}
 
 	prevName := discipline.Name
+	prevFiles := discipline.Files
 
 	request.Decode(w, r.Body, &discipline)
+
+	removedFiles := getRemovedFiles(prevFiles, discipline.Files)
+	if removedFiles != nil {
+		removeFiles(h.Path + discipline.Name + "/", removedFiles)
+	}
 
 	if prevName != discipline.Name {
 		err = os.Rename(h.Path+prevName, h.Path+discipline.Name)
@@ -165,7 +171,7 @@ func (h *DisciplineHandler) UploadDisciplineFiles(w http.ResponseWriter, r *http
 func formDicsiplineFiles(filenames []string, name string) []File {
 	var files []File
 	for _, f := range filenames {
-		file := File{Url: name + "/" + f, Desc: f}
+		file := File{Url: name + "/" + f, Name: f}
 		files = append(files, file)
 	}
 
@@ -216,12 +222,12 @@ func InitDisciplineCollection(database *mgo.Database) *mgo.Collection {
 	collection := database.C("discipline")
 
 	var files1 []File
-	files1 = append(files1, File{Url: "/disc1/book1", Desc: "book1.pdf"})
-	files1 = append(files1, File{Url: "/disc1/book2", Desc: "book2.pdf"})
+	files1 = append(files1, File{Url: "/disc1/book1", Name: "book1.pdf"})
+	files1 = append(files1, File{Url: "/disc1/book2", Name: "book2.pdf"})
 
 	var files2 []File
-	files2 = append(files2, File{Url: "/disc2/book3", Desc: "book3.pdf"})
-	files2 = append(files2, File{Url: "/disc2/book4", Desc: "book4.pdf"})
+	files2 = append(files2, File{Url: "/disc2/book3", Name: "book3.pdf"})
+	files2 = append(files2, File{Url: "/disc2/book4", Name: "book4.pdf"})
 
 	if n, _ := collection.Count(); n == 0 {
 		collection.Insert(&Discipline{
@@ -237,6 +243,41 @@ func InitDisciplineCollection(database *mgo.Database) *mgo.Collection {
 	}
 
 	return collection
+}
+
+func getRemovedFiles(prevFiles []File, currentFiles []File) []File {
+	var removedFiles []File
+
+	for _, f := range prevFiles {
+		if !fileExists(currentFiles, f) {
+			removedFiles = append(removedFiles, f)
+		}
+	}
+
+	if len(removedFiles) == 0 {
+		return nil
+	}
+
+	return removedFiles
+}
+
+func fileExists(files []File, file File) bool {
+	for _, f := range files {
+		if file == f {
+			return true
+		}
+	}
+
+	return false
+}
+
+func removeFiles(prefix string, files []File) {
+	for _, f := range files {
+		err := os.Remove(prefix + f.Name)
+		if err != nil {
+			panic(err)
+		}
+	}
 }
 
 // func (h *DisciplineHandlerOld) GetDisciplineList(w http.ResponseWriter, r *http.Request) {
