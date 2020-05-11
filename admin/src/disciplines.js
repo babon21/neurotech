@@ -6,7 +6,7 @@ import { FileInput, FileField } from 'react-admin';
 const DisciplinesPanel = ({ id, record, resource }) => {
     return (
         record.files.map((file) => {
-            return <p><a href={file.url}>{file.desc}</a></p>
+            return <p><a href={file.url}>{file.name}</a></p>
         })
     );
 }
@@ -15,7 +15,7 @@ export const DisciplinesList = props => (
     <List {...props}>
         <Datagrid rowClick="edit" expand={<DisciplinesPanel />}>
             <TextField source="name" sortable={false} />
-            <FileField source="files" src="url" title="desc" />
+            <FileField source="files" src="url" title="name" />
         </Datagrid>
     </List>
 );
@@ -30,7 +30,7 @@ export const DisciplineEdit = props => (
             <TextInput disabled source="id" />
             <TextInput source="name" />
             <FileInput source="files" label="Related files" multiple="true">
-                <FileField source="url" title="desc" />
+                <FileField source="url" title="name" />
             </FileInput>
         </SimpleForm>
     </Edit>
