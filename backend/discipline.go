@@ -19,6 +19,7 @@ type Discipline struct {
 	ID    bson.ObjectId `json:"id" bson:"_id"`
 	Name  string        `json:"name" bson:"name"`
 	Files []File        `json:"files" bson:"files"`
+	Tag   string        `json:"tag" bson:"tag"`
 }
 
 type File struct {
@@ -92,7 +93,7 @@ func (h *DisciplineHandler) UpdateDiscipline(w http.ResponseWriter, r *http.Requ
 
 	removedFiles := getRemovedFiles(prevFiles, discipline.Files)
 	if removedFiles != nil {
-		removeFiles(h.Path + discipline.Name + "/", removedFiles)
+		removeFiles(h.Path+discipline.Name+"/", removedFiles)
 	}
 
 	if prevName != discipline.Name {
@@ -221,26 +222,26 @@ func InitDisciplineCollection(database *mgo.Database) *mgo.Collection {
 	// если коллекции не будет, то она создасться автоматически
 	collection := database.C("discipline")
 
-	var files1 []File
-	files1 = append(files1, File{Url: "/disc1/book1", Name: "book1.pdf"})
-	files1 = append(files1, File{Url: "/disc1/book2", Name: "book2.pdf"})
+	// var files1 []File
+	// files1 = append(files1, File{Url: "/disc1/book1", Name: "book1.pdf"})
+	// files1 = append(files1, File{Url: "/disc1/book2", Name: "book2.pdf"})
 
-	var files2 []File
-	files2 = append(files2, File{Url: "/disc2/book3", Name: "book3.pdf"})
-	files2 = append(files2, File{Url: "/disc2/book4", Name: "book4.pdf"})
+	// var files2 []File
+	// files2 = append(files2, File{Url: "/disc2/book3", Name: "book3.pdf"})
+	// files2 = append(files2, File{Url: "/disc2/book4", Name: "book4.pdf"})
 
-	if n, _ := collection.Count(); n == 0 {
-		collection.Insert(&Discipline{
-			bson.NewObjectId(),
-			"mongodb discipline",
-			files1,
-		})
-		collection.Insert(&Discipline{
-			bson.NewObjectId(),
-			"redis discipline",
-			files2,
-		})
-	}
+	// if n, _ := collection.Count(); n == 0 {
+	// 	collection.Insert(&Discipline{
+	// 		bson.NewObjectId(),
+	// 		"mongodb discipline",
+	// 		files1,
+	// 	})
+	// 	collection.Insert(&Discipline{
+	// 		bson.NewObjectId(),
+	// 		"redis discipline",
+	// 		files2,
+	// 	})
+	// }
 
 	return collection
 }
