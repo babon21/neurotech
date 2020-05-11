@@ -13,9 +13,10 @@ import (
 )
 
 type News struct {
-	ID      bson.ObjectId `json:"id" bson:"_id"`
-	Title   string        `json:"title" bson:"title"`
-	Content string        `json:"content" bson:"content"`
+	ID              bson.ObjectId `json:"id" bson:"_id"`
+	Title           string        `json:"title" bson:"title"`
+	Content         string        `json:"content" bson:"content"`
+	PublicationDate string        `json:"publication_date" bson:"publication_date"`
 }
 
 type NewsHandler struct {
@@ -29,7 +30,7 @@ func (h *NewsHandler) CreateNews(w http.ResponseWriter, r *http.Request) {
 	request.Decode(w, r.Body, &news)
 	news.ID = bson.NewObjectId()
 	request.CreateOne(w, h.Collection, &news)
-	
+
 	fmt.Println("Create news success!")
 }
 
@@ -87,11 +88,13 @@ func InitNewsCollection(database *mgo.Database) *mgo.Collection {
 			bson.NewObjectId(),
 			"mongodb",
 			"Рассказать про монгу",
+			"2020-05-09",
 		})
 		collection.Insert(&News{
 			bson.NewObjectId(),
 			"redis",
 			"Рассказать про redis",
+			"2000-05-09",
 		})
 	}
 
