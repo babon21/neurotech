@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+    <link rel="stylesheet" type="text/css" href="index.css">
+    <script src="https://kit.fontawesome.com/9f3b120353.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="container-my">
+        <nav class="navbar navbar-expand-lg sticky-top bg-white">
+            <a class="navbar-brand w-25 pr-5 mr-auto" href="#">Laboratory<br>"Neuromorphic technologies"</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse pl-5" id="navbarNav">
+                <ul class="navbar-nav main-nav">
+                    <li class="nav-item ">
+                        <a class="nav-link" href="publications.html">Публикации</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="educational-materials.html">Учебные материалы</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="students.html">Студенты</a>
+                    </li>
+                </ul>
+
+                <ul class="navbar-nav ml-auto margin-">
+                    <li class="nav-item">
+                        <a class="nav-link" href="" data-target="#myModal" data-toggle="modal">English</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+
+    </div>
+    <hr />
+
+    <div class="container-my center">
+
+        <!-- <div> -->
+        <h3 class="title" align="center">Учебно-методические материалы</h3>
+        <!-- </div> -->
+
+        <div class=>
+            <h5 class="section">Все дисциплины</h5>
+            <div id="disciplines" class="list-group w-75 center"></div>
+        </div>
+
+    </div>
+
+
+
+    <script>
+
+
+        $(document).ready(function () {
+            $.get("http://localhost:8080/disciplines", function (response) {
+                for (let i = 0; i < response.length; i++) {
+                    console.log(response[i])
+
+                    $("#disciplines").append(`<a href="" class="list-group-item" data-toggle="collapse" data-target="#item-${i}">
+                        <i class="fas fa-chevron-right"></i> ${response[i].name}</a>`)
+                    $("#disciplines").append(`<div class="list-group collapse" id="item-${i}">`)
+                    $(`#item-${i}`).append(`<a href="" class="list-group-item" data-toggle="collapse" data-target="#item-${i}-1">
+                        <i class="fas fa-chevron-right"></i> Лекции</a>`)
+                    $(`#item-${i}`).append(`<div class="list-group collapse" id="item-${i}-1">`)
+
+                    for (let j = 0; j < response[i].files.length; j++) {
+                        $(`#item-${i}-1`).append(`<a href="" class="list-group-item" data-toggle="collapse" data-target="#item-${i}-${j}">${response[i].files[j].name}</a>`)
+                    }
+                    $(`#item-${i}`).append("</div>")
+                }
+
+                $(function () {
+
+                    $('.list-group-item').on('click', function () {
+                        $('.fas', this)
+                            .toggleClass('fa-chevron-right')
+                            .toggleClass('fa-chevron-down');
+                    });
+
+                });
+            });
+
+
+        });
+    </script>
+</body>

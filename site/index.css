@@ -1,0 +1,52 @@
+.container-my {
+    max-width: 1440px;
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+a {
+    color: black;
+}
+
+li {
+    padding: 0.6em;
+}
+
+hr {
+  margin-top: 0;
+  background-color: #565;
+}
+
+.title {
+  margin: 5%;
+}
+
+.section {
+  margin-left: 13%;
+  margin-bottom: 25px;
+}
+
+.center {
+  margin: 0 auto;
+}
+
+.main-nav {
+    text-transform: uppercase;
+}
+
+.navbar {
+  padding-left: 7%;
+}
+
+.brain {
+    height: 900px;
+}
+
+.list-group  > .list-group > .list-group-item {
+    padding-left: 2.5rem;
+}
+
+.list-group  > .list-group > .list-group > .list-group-item {
+    padding-left: 4rem;
+}
