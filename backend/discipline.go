@@ -18,7 +18,8 @@ import (
 type Discipline struct {
 	ID                bson.ObjectId `json:"id" bson:"_id"`
 	Name              string        `json:"name" bson:"name"`
-	Files             []File        `json:"files" bson:"files"`
+	Lections          []File        `json:"lections" bson:"lections"`
+	Books             []File        `json:"books" bson:"books"`
 	IsCurrentSemester bool          `json:"is_current_semester" bson:"is_current_semester"`
 }
 
@@ -40,11 +41,18 @@ func (h *DisciplineHandler) CreateDiscipline(w http.ResponseWriter, r *http.Requ
 	discipline.ID = bson.NewObjectId()
 	request.CreateOne(w, h.Collection, &discipline)
 
-	result := utils.CreateFolder(h.Path + discipline.Name)
+	result := utils.CreateFolder(h.Path + discipline.Name + "/lections")
 	if result {
-		fmt.Println("Discipline folder created!")
+		fmt.Println("Discipline lections dir created!")
 	} else {
-		fmt.Println("Failed create folder discipline!")
+		fmt.Println("Failed create lections dir discipline!")
+	}
+
+	result = utils.CreateFolder(h.Path + discipline.Name + "/books")
+	if result {
+		fmt.Println("Discipline books dir created!")
+	} else {
+		fmt.Println("Failed create books dir discipline!")
 	}
 
 	fmt.Println("Create discipline success!")
@@ -73,31 +81,40 @@ func (h *DisciplineHandler) DeleteDiscipline(w http.ResponseWriter, r *http.Requ
 	fmt.Println("Success delete discipline request!")
 }
 
+// UpdateDiscipline Сначала удалить файлы из ФС,
+// Затем переименовать дисциплину,
+// Затем обновить документ в Mongo
 func (h *DisciplineHandler) UpdateDiscipline(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Edit discipline request!")
 	id := chi.URLParam(r, "id")
 
 	// TODO проверка на bson id
 
-	var discipline Discipline
+	var prevDiscipline Discipline
 
-	err := h.Collection.FindId(bson.ObjectIdHex(id)).One(&discipline)
+	err := h.Collection.FindId(bson.ObjectIdHex(id)).One(&prevDiscipline)
 	if err != nil {
 		panic(err)
 	}
 
-	prevName := discipline.Name
-	prevFiles := discipline.Files
+	prevLections := prevDiscipline.Lections
+	prevBooks := prevDiscipline.Books
 
+	var discipline Discipline
 	request.Decode(w, r.Body, &discipline)
 
-	removedFiles := getRemovedFiles(prevFiles, discipline.Files)
-	if removedFiles != nil {
-		removeFiles(h.Path+discipline.Name+"/", removedFiles)
+	removedLections := getRemovedFiles(prevLections, discipline.Lections)
+	if removedLections != nil {
+		removeFiles(h.Path+discipline.Name+"/lections/", removedLections)
 	}
 
-	if prevName != discipline.Name {
-		err = os.Rename(h.Path+prevName, h.Path+discipline.Name)
+	removedBooks := getRemovedFiles(prevBooks, discipline.Books)
+	if removedBooks != nil {
+		removeFiles(h.Path+discipline.Name+"/books/", removedBooks)
+	}
+
+	if prevDiscipline.Name != discipline.Name {
+		err = os.Rename(h.Path+prevDiscipline.Name, h.Path+discipline.Name)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -122,7 +139,7 @@ func (h *DisciplineHandler) UpdateDiscipline(w http.ResponseWriter, r *http.Requ
 }
 
 func (h *DisciplineHandler) GetDisciplineList(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Get news list request!")
+	fmt.Println("Get discipline list request!")
 	disciplines := []*Discipline{}
 	rangeParam := r.URL.Query().Get("range")
 	// need check to rangeParam
@@ -137,7 +154,6 @@ func (h *DisciplineHandler) GetOneDiscipline(w http.ResponseWriter, r *http.Requ
 }
 
 func (h *DisciplineHandler) UploadDisciplineFiles(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Upload discipline files request!")
 	id := chi.URLParam(r, "id")
 	fmt.Println("Upload files to discipline request! id: ", id)
 
@@ -150,15 +166,24 @@ func (h *DisciplineHandler) UploadDisciplineFiles(w http.ResponseWriter, r *http
 		panic(err)
 	}
 
-	// в папку этой дисциплины
-	filenames, err := h.UploadMultipleFiles(w, r, 5*1024*1025*100, discipline.Name)
+	lectionsFilenames, err := h.UploadMultipleFiles(w, r, discipline.Name+"/lections", "lections")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	// todo переделать formDicsiplineFiles
+	lections := formDicsiplineFiles(lectionsFilenames, discipline.Name+"/lections/")
 
-	files := formDicsiplineFiles(filenames, discipline.Name)
-	discipline.Files = append(discipline.Files, files...)
+	bookFileNames, err := h.UploadMultipleFiles(w, r, discipline.Name+"/books", "books")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	// todo переделать formDicsiplineFiles
+	books := formDicsiplineFiles(bookFileNames, discipline.Name+"/books/")
+
+	discipline.Books = append(discipline.Books, books...)
+	discipline.Lections = append(discipline.Lections, lections...)
 
 	err = h.Collection.Update(bson.M{"_id": discipline.ID}, discipline)
 	if err != nil {
@@ -166,24 +191,27 @@ func (h *DisciplineHandler) UploadDisciplineFiles(w http.ResponseWriter, r *http
 		return
 	}
 
-	fmt.Println("Upload discipline files success!")
+	fmt.Println("Upload " + discipline.Name + " discipline files success!")
 }
 
-func formDicsiplineFiles(filenames []string, name string) []File {
+func formDicsiplineFiles(filenames []string, baseUrl string) []File {
 	var files []File
 	for _, f := range filenames {
-		file := File{Url: name + "/" + f, Name: f}
+		file := File{
+			Url:  baseUrl + f,
+			Name: f,
+		}
 		files = append(files, file)
 	}
 
 	return files
 }
 
-func (h *DisciplineHandler) UploadMultipleFiles(w http.ResponseWriter, r *http.Request, size int64, name string) ([]string, error) {
-	r.ParseMultipartForm(size)
-	path := h.Path + name
+func (h *DisciplineHandler) UploadMultipleFiles(w http.ResponseWriter, r *http.Request, disciplineName string, typeFiles string) ([]string, error) {
+	r.ParseMultipartForm(5 * 1024 * 1025 * 100)
+	path := h.Path + disciplineName
 
-	files := r.MultipartForm.File["multiplefiles"] // grab the filenames
+	files := r.MultipartForm.File[typeFiles] // grab the filenames
 
 	var filenames []string
 	// loop through the files one by one
@@ -195,7 +223,7 @@ func (h *DisciplineHandler) UploadMultipleFiles(w http.ResponseWriter, r *http.R
 			return nil, err
 		}
 
-		log.Info().Msg("add study material to discipline name: " + f.Filename)
+		log.Info().Msg("add " + typeFiles + " " + f.Filename + " to discipline: " + disciplineName)
 		out, err := os.Create(path + "/" + f.Filename)
 
 		defer out.Close()
@@ -276,7 +304,7 @@ func removeFiles(prefix string, files []File) {
 	for _, f := range files {
 		err := os.Remove(prefix + f.Name)
 		if err != nil {
-			panic(err)
+			// panic(err)
 		}
 	}
 }
