@@ -5,9 +5,9 @@ import { BooleanField } from 'react-admin';
 import { BooleanInput } from 'react-admin';
 
 const DisciplinesPanel = ({ id, record, resource }) => {
-    console.log(record.files)
+    console.log(record.lections)
     return (
-        record.files.map((file) => {
+        record.lections.map((file) => {
             return <p><a href={file.url}>{file.name}</a></p>
         })
     );
@@ -32,7 +32,11 @@ export const DisciplineEdit = props => (
             <TextInput disabled source="id" />
             <TextInput source="name" />
             <BooleanInput label="Текущий семестр?" source="is_current_semester" />
-            <FileInput source="files" label="Related files" multiple={true}>
+            <FileInput source="lections" label="Лекции" multiple={true}>
+                <FileField source="url" title="name" />
+            </FileInput>
+
+            <FileInput source="books" label="Учебные и методические пособия" multiple={true}>
                 <FileField source="url" title="name" />
             </FileInput>
         </SimpleForm>
@@ -44,8 +48,12 @@ export const DisciplineCreate = props => (
         <SimpleForm>
             <TextInput source="name" />
             <BooleanInput label="Текущий семестр?" source="is_current_semester  " />
-            <FileInput source="files" label="Related files" multiple={true}>
-                <FileField source="src" title="title" />
+            <FileInput source="lections" label="Лекции" multiple={true}>
+                <FileField source="src" title="name" />
+            </FileInput>
+
+            <FileInput source="books" label="Учебные и методические пособия" multiple={true}>
+                <FileField source="books" title="name" />
             </FileInput>
         </SimpleForm>
     </Create>
