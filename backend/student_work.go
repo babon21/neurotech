@@ -13,10 +13,16 @@ import (
 )
 
 type StudentWork struct {
-	ID      bson.ObjectId `json:"id" bson:"_id"`
+	ID      bson.ObjectId `json:"id,omitempty" bson:"_id"`
 	Student string        `json:"student" bson:"student"`
 	Year    int32         `json:"year" bson:"year"`
 	Title   string        `json:"title" bson:"title"`
+	Type    string        `json:"type,omitempty" bson:"type"`
+}
+
+type TypeWork struct {
+	Type  string        `json:"type" bson:"_id"`
+	Works []StudentWork `json:"works"`
 }
 
 type StudentWorkHandler struct {
@@ -73,12 +79,46 @@ func (h *StudentWorkHandler) UpdateStudentWork(w http.ResponseWriter, r *http.Re
 
 func (h *StudentWorkHandler) GetStudentWorkList(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Get student work list request!")
+	isGroup := r.URL.Query().Get("type_group")
 
-	list := []*StudentWork{}
-	rangeParam := r.URL.Query().Get("range")
-	// need check to rangeParam
-	request.GetList(w, h.Collection, rangeParam, &list)
+	if isGroup == "" {
+		list := []*StudentWork{}
+		rangeParam := r.URL.Query().Get("range")
+		// need check to rangeParam
+		request.GetList(w, h.Collection, rangeParam, &list)
+		return
+	}
 
+	fmt.Println("Get publications list with year group request from site!")
+
+	var result []TypeWork
+	pipeline := []bson.M{
+		{
+			"$group": bson.M{
+				"_id": "$type",
+				"works": bson.M{
+					"$push": bson.M{
+						"title":   "$title",
+						"student": "$student",
+						"year":    "$year",
+					},
+				},
+			},
+		},
+	}
+
+	err := h.Collection.Pipe(pipeline).All(&result)
+	if err != nil {
+		panic(err)
+	}
+
+	json, err := json.Marshal(result)
+	if err != nil {
+		log.Err(err).Msg("json marshall err")
+		return
+	}
+
+	request.ResponseWithJSON(w, json)
 	fmt.Println("Get student work list success!")
 }
 
@@ -99,12 +139,14 @@ func InitStudentWorksCollection(database *mgo.Database) *mgo.Collection {
 			"Иванов Иван",
 			2017,
 			"Диплом про монгу",
+			"bachelor_work",
 		})
 		collection.Insert(&StudentWork{
 			bson.NewObjectId(),
 			"Some Batman",
 			2014,
 			"Диплом про redis",
+			"master_dissertation",
 		})
 	}
 
