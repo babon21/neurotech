@@ -9,6 +9,9 @@ const customDataProvider = {
         if (resource === 'disciplines') {
             return updateDiscipline(resource, params)
         }
+        if (resource === 'publications') {
+            return uploadFileAndSave(resource, params, dataProvider.update)
+        }
         return dataProvider.update(resource, params);
 
     },
@@ -17,10 +20,38 @@ const customDataProvider = {
         if (resource === 'disciplines') {
             return createDiscipline(resource, params)
         }
+        if (resource === 'publications') {
+            return uploadFileAndSave(resource, params, dataProvider.create)
+        }
         return dataProvider.create(resource, params);
-
     },
 };
+
+function uploadFileAndSave(resource, params, func) {
+    if (params.data.hasOwnProperty('file') === false) {
+        return func(resource, params);
+    }
+
+    let file = params.data.file
+    delete params.data.file
+
+    if (file == null) {
+        return func(resource, params)
+    }
+
+    console.log(params.data)
+    console.log("file:", file)
+
+    return func(resource, params).then((result) => {
+        let formData = new FormData();
+        formData.append("file", file.rawFile)
+
+        return fetch('http://localhost:8080/publications/' + result.data.id + '/files', {
+            method: 'POST',
+            body: formData
+        }).then(() => result)
+    })
+}
 
 function createDiscipline(resource, params) {
     if (params.data.hasOwnProperty('lections') === false && params.data.hasOwnProperty('books') === false) {
