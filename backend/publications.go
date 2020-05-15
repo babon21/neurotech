@@ -18,6 +18,11 @@ type Publication struct {
 	Title string        `json:"title" bson:"title"`
 }
 
+type YearPublication struct {
+	Year  int32    `json:"year" bson:"_id"`
+	Title []string `json:"titles" bson:"titles"`
+}
+
 type PublicationHandler struct {
 	Collection *mgo.Collection
 }
@@ -68,11 +73,43 @@ func (h *PublicationHandler) UpdatePublication(w http.ResponseWriter, r *http.Re
 }
 
 func (h *PublicationHandler) GetPublicationsList(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Get publications list request!")
-	publication := []*Publication{}
-	rangeParam := r.URL.Query().Get("range")
-	// need check to rangeParam
-	request.GetList(w, h.Collection, rangeParam, &publication)
+	isGroup := r.URL.Query().Get("year_group")
+
+	if isGroup == "" {
+		fmt.Println("Get publications list request!")
+		rangeParam := r.URL.Query().Get("range")
+		// need check to rangeParam
+		publications := []*Publication{}
+		request.GetList(w, h.Collection, rangeParam, &publications)
+		return
+	}
+
+	fmt.Println("Get publications list with year group request from site!")
+
+	var result []YearPublication
+	pipeline := []bson.M{
+		{
+			"$group": bson.M{
+				"_id": "$year",
+				"titles": bson.M{
+					"$push": "$title",
+				},
+			},
+		},
+	}
+
+	err := h.Collection.Pipe(pipeline).All(&result)
+	if err != nil {
+		panic(err)
+	}
+
+	json, err := json.Marshal(result)
+	if err != nil {
+		log.Err(err).Msg("json marshall err")
+		return
+	}
+
+	request.ResponseWithJSON(w, json)
 }
 
 func (h *PublicationHandler) GetOnePublication(w http.ResponseWriter, r *http.Request) {
