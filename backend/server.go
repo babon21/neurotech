@@ -104,7 +104,10 @@ func main() {
 	setNewsRouter(mux, newsHandler)
 
 	publicationCollection := InitPublicationsCollection(databaseSite)
-	publicationHandler := &PublicationHandler{Collection: publicationCollection}
+	publicationHandler := &PublicationHandler{
+		Collection: publicationCollection,
+		Path: "publications/",
+	}
 	setPublicationsRouter(mux, publicationHandler)
 
 	studenWorkCollection := InitStudentWorksCollection(databaseSite)
@@ -114,7 +117,7 @@ func main() {
 	disciplineCollection := InitDisciplineCollection(databaseSite)
 	disciplineHandler := &DisciplineHandler{
 		Collection: disciplineCollection,
-		Path: "disciplines/",
+		Path:       "disciplines/",
 	}
 	setDisciplineRouter(mux, disciplineHandler)
 
@@ -176,6 +179,7 @@ func setPublicationsRouter(r *chi.Mux, publicationsHandler *PublicationHandler) 
 				r.Get("/", publicationsHandler.GetOnePublication)    // GET /publications/123
 				r.Put("/", publicationsHandler.UpdatePublication)    // PUT /publications/123
 				r.Delete("/", publicationsHandler.DeletePublication) // DELETE /publications/123
+				r.Post("/files", publicationsHandler.UploadPublicationFile) // PUT /disciplines/123
 			})
 		})
 	})
