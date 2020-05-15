@@ -63,21 +63,21 @@
         <h3 class="title" align="center">Студенческие работы</h3>
 
         <div class=>
-            <h5 class="section">Все работы</h5>
-            <div id="publications" class="list-group w-75 center"></div>
+            <div id="works" class="list-group w-75 center"></div>
         </div>
 
     </div>
 
     <script>
         $(document).ready(function () {
-            $.get("http://localhost:8080/publications?year_group=true", function (response) {
+            $.get("http://localhost:8080/student-works?type_group=true", function (response) {
                 for (let i = 0; i < response.length; i++) {
-                    let year = response[i].year
-                    $("#publications").append(`<div id=${year} class='list-group year'></div>`)
-                    $(`#${year}`).append(`<h5 class='list-group'>${year}</h5>`)
-                    for (let j = 0; j < response[i].titles.length; j++) {
-                        $(`#${year}`).append(`<div class='list-group-item'>${response[i].titles[j]}</div>`)
+                    let type = response[i].type
+                    let typeName = getTypeNameById(type)
+                    $("#works").append(`<div id=${type} class='list-group type'></div>`)
+                    $(`#${type}`).append(`<h5 class='list-group'>${typeName}</h5>`)
+                    for (let j = 0; j < response[i].works.length; j++) {
+                        $(`#${type}`).append(`<div class='list-group-item'>${response[i].works[j].student}<br/>${response[i].works[j].title}<br/>${response[i].works[j].year}</div>`)
                     }
                     // $("#publications").append(`<a href="" class="list-group-item" data-toggle="collapse" data-target="#item-${i}">
                     //     <i class="fas fa-chevron-right"></i> ${response[i].name}</a>`)
@@ -93,6 +93,20 @@
                 }
             });
         });
-    </script>
 
+        function getTypeNameById(id) {
+            switch (id) {
+                case "candidate_dissertation":
+                    return "Кандидатская диссертация";
+                case "master_dissertation":
+                    return "Магистерская диссертация";
+                case "graduation_project":
+                    return "Дипломный проект";
+                case "bachelor_work":
+                    return "Выпускная бакалаврская работа";
+                default:
+                    return ""
+            }
+        }
+    </script>
 </body>
