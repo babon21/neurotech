@@ -33,10 +33,13 @@
             <div class="collapse navbar-collapse pl-5" id="navbarNav">
                 <ul class="navbar-nav main-nav">
                     <li class="nav-item ">
+                        <a class="nav-link" href="index.html">Новости</a>
+                    </li>
+                    <li class="nav-item ">
                         <a class="nav-link" href="publications.html">Публикации</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="educational-materials.html">Учебные материалы</a>
+                        <a class="nav-link" href="study-materials.html">Учебные материалы</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="students.html">Студенты</a>
@@ -85,8 +88,8 @@
                         <i class="fas fa-chevron-right"></i> Лекции</a>`)
                     $(`#item-${i}`).append(`<div class="list-group collapse" id="item-${i}-1">`)
 
-                    for (let j = 0; j < response[i].files.length; j++) {
-                        $(`#item-${i}-1`).append(`<a href="" class="list-group-item" data-toggle="collapse" data-target="#item-${i}-${j}">${response[i].files[j].name}</a>`)
+                    for (let j = 0; j < response[i].lections.length; j++) {
+                        $(`#item-${i}-1`).append(`<a href="" class="list-group-item" data-toggle="collapse" data-target="#item-${i}-${j}">${response[i].lections[j].name}</a>`)
                     }
                     $(`#item-${i}`).append("</div>")
                 }
