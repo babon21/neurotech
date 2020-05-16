@@ -3,6 +3,7 @@ import { List, Datagrid, TextField, Create, Edit, TextInput, SimpleForm } from '
 import { FileInput, FileField } from 'react-admin';
 import { BooleanField } from 'react-admin';
 import { BooleanInput } from 'react-admin';
+import { ArrayInput, SimpleFormIterator } from 'react-admin';
 
 const DisciplinesPanel = ({ id, record, resource }) => {
     console.log(record.lections)
@@ -32,6 +33,11 @@ export const DisciplineEdit = props => (
             <TextInput disabled source="id" />
             <TextInput source="name" />
             <BooleanInput label="Текущий семестр?" source="is_current_semester" />
+            <ArrayInput source="references">
+                <SimpleFormIterator>
+                    <TextInput source="url" />
+                </SimpleFormIterator>
+            </ArrayInput>
             <FileInput source="lections" label="Лекции" multiple={true}>
                 <FileField source="url" title="name" />
             </FileInput>
@@ -47,7 +53,12 @@ export const DisciplineCreate = props => (
     <Create {...props}>
         <SimpleForm>
             <TextInput source="name" />
-            <BooleanInput label="Текущий семестр?" source="is_current_semester  " />
+            <BooleanInput label="Текущий семестр?" source="is_current_semester"/>
+            <ArrayInput source="references">
+                <SimpleFormIterator>
+                    <TextInput source="url" />
+                </SimpleFormIterator>
+            </ArrayInput>
             <FileInput source="lections" label="Лекции" multiple={true}>
                 <FileField source="src" title="name" />
             </FileInput>
