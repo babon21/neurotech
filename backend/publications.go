@@ -198,6 +198,11 @@ func (h *PublicationHandler) GetPublicationsList(w http.ResponseWriter, r *http.
 				},
 			},
 		},
+		{
+			"$sort": bson.M {
+				"_id": -1,
+			},
+		},
 	}
 
 	err := h.Collection.Pipe(pipeline).All(&result)
