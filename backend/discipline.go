@@ -21,11 +21,16 @@ type Discipline struct {
 	Lections          []File        `json:"lections" bson:"lections"`
 	Books             []File        `json:"books" bson:"books"`
 	IsCurrentSemester bool          `json:"is_current_semester" bson:"is_current_semester"`
+	References        []Reference   `json:"references" bson:"references"`
 }
 
 type File struct {
 	Url  string `json:"url" bson:"url"`
 	Name string `json:"name" bson:"name"`
+}
+
+type Reference struct {
+	Url string `json:"url" bson:"url"`
 }
 
 type DisciplineHandler struct {
