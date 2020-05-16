@@ -81,16 +81,41 @@
                 for (let i = 0; i < response.length; i++) {
                     console.log(response[i])
 
-                    $("#disciplines").append(`<a href="" class="list-group-item" data-toggle="collapse" data-target="#item-${i}">
-                        <i class="fas fa-chevron-right"></i> ${response[i].name}</a>`)
-                    $("#disciplines").append(`<div class="list-group collapse" id="item-${i}">`)
-                    $(`#item-${i}`).append(`<a href="" class="list-group-item" data-toggle="collapse" data-target="#item-${i}-1">
-                        <i class="fas fa-chevron-right"></i> Лекции</a>`)
-                    $(`#item-${i}`).append(`<div class="list-group collapse" id="item-${i}-1">`)
 
-                    for (let j = 0; j < response[i].lections.length; j++) {
-                        $(`#item-${i}-1`).append(`<a href="" class="list-group-item" data-toggle="collapse" data-target="#item-${i}-${j}">${response[i].lections[j].name}</a>`)
+                    $("#disciplines").append(`<a href="" class="list-group-item" data-toggle="collapse" data-target="#item-${i}">
+                        <i class="fas fa-chevron-right"></i> ${response[i].name}</a>`);
+                    $("#disciplines").append(`<div class="list-group collapse" id="item-${i}">`);
+
+                    if (response[i].hasOwnProperty('lections') === true) {
+                        $(`#item-${i}`).append(`<a href="" class="list-group-item" data-toggle="collapse" data-target="#item-${i}-1">
+                        <i class="fas fa-chevron-right"></i> Лекции</a>`)
+                        $(`#item-${i}`).append(`<div class="list-group collapse" id="item-${i}-1">`)
+
+                        for (let j = 0; j < response[i].lections.length; j++) {
+                            $(`#item-${i}-1`).append(`<a href="" class="list-group-item" data-toggle="collapse" data-target="#item-${i}-${j}">${response[i].lections[j].name}</a>`)
+                        }
                     }
+
+                    if (response[i].hasOwnProperty('books') === true) {
+                        $(`#item-${i}`).append(`<a href="" class="list-group-item" data-toggle="collapse" data-target="#item-${i}-2">
+                        <i class="fas fa-chevron-right"></i> Учебные и методические пособия</a>`)
+                        $(`#item-${i}`).append(`<div class="list-group collapse" id="item-${i}-2">`)
+
+                        for (let j = 0; j < response[i].books.length; j++) {
+                            $(`#item-${i}-2`).append(`<a href="" class="list-group-item" data-toggle="collapse" data-target="#item-${i}-${j}">${response[i].books[j].name}</a>`)
+                        }
+                    }
+
+                    if (response[i].hasOwnProperty('references') === true) {
+                        $(`#item-${i}`).append(`<a href="" class="list-group-item" data-toggle="collapse" data-target="#item-${i}-3">
+                        <i class="fas fa-chevron-right"></i> Ссылки</a>`)
+                        $(`#item-${i}`).append(`<div class="list-group collapse" id="item-${i}-3">`)
+
+                        for (let j = 0; j < response[i].books.length; j++) {
+                            $(`#item-${i}-3`).append(`<a href="" class="list-group-item" data-toggle="collapse" data-target="#item-${i}-${j}">${response[i].references[j].url}</a>`)
+                        }
+                    }
+
                     $(`#item-${i}`).append("</div>")
                 }
 

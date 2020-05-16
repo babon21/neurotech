@@ -18,10 +18,10 @@ import (
 type Discipline struct {
 	ID                bson.ObjectId `json:"id" bson:"_id"`
 	Name              string        `json:"name" bson:"name"`
-	Lections          []File        `json:"lections" bson:"lections"`
-	Books             []File        `json:"books" bson:"books"`
+	Lections          []File        `json:"lections,omitempty" bson:"lections"`
+	Books             []File        `json:"books,omitempty" bson:"books"`
 	IsCurrentSemester bool          `json:"is_current_semester" bson:"is_current_semester"`
-	References        []Reference   `json:"references" bson:"references"`
+	References        []Reference   `json:"references,omitempty" bson:"references"`
 }
 
 type File struct {
