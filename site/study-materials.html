@@ -19,6 +19,8 @@
 
 
     <link rel="stylesheet" type="text/css" href="index.css">
+    <link rel="stylesheet" type="text/css" href="study-materials.css">
+
     <script src="https://kit.fontawesome.com/9f3b120353.js" crossorigin="anonymous"></script>
 </head>
 
@@ -65,8 +67,9 @@
         <!-- </div> -->
 
         <div class=>
-            <h5 class="section">Все дисциплины</h5>
-            <div id="disciplines" class="list-group w-75 center"></div>
+            <div id="disciplines" class="list-group w-75 center">
+                <h5 class="section">Все дисциплины</h5>
+            </div>
         </div>
 
     </div>
@@ -92,7 +95,7 @@
                         $(`#item-${i}`).append(`<div class="list-group collapse" id="item-${i}-1">`)
 
                         for (let j = 0; j < response[i].lections.length; j++) {
-                            $(`#item-${i}-1`).append(`<a href="" class="list-group-item" data-toggle="collapse" data-target="#item-${i}-${j}">${response[i].lections[j].name}</a>`)
+                            $(`#item-${i}-1`).append(`<a href="" class="list-group-item discipline" data-toggle="collapse" data-target="#item-${i}-${j}">${response[i].lections[j].name}</a>`)
                         }
                     }
 
@@ -111,7 +114,7 @@
                         <i class="fas fa-chevron-right"></i> Ссылки</a>`)
                         $(`#item-${i}`).append(`<div class="list-group collapse" id="item-${i}-3">`)
 
-                        for (let j = 0; j < response[i].books.length; j++) {
+                        for (let j = 0; j < response[i].references.length; j++) {
                             $(`#item-${i}-3`).append(`<a href="" class="list-group-item" data-toggle="collapse" data-target="#item-${i}-${j}">${response[i].references[j].url}</a>`)
                         }
                     }

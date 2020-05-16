@@ -62,7 +62,7 @@
 
         <h3 class="title" align="center">Студенческие работы</h3>
 
-        <div class=>
+        <div>
             <div id="works" class="list-group w-75 center"></div>
         </div>
 
@@ -75,7 +75,7 @@
                     let type = response[i].type
                     let typeName = getTypeNameById(type)
                     $("#works").append(`<div id=${type} class='list-group type'></div>`)
-                    $(`#${type}`).append(`<h5 class='list-group'>${typeName}</h5>`)
+                    $(`#${type}`).append(`<h5 class='list-group section'>${typeName}</h5>`)
                     for (let j = 0; j < response[i].works.length; j++) {
                         $(`#${type}`).append(`<div class='list-group-item'>${response[i].works[j].student}<br/>${response[i].works[j].title}<br/>${response[i].works[j].year}</div>`)
                     }
@@ -97,13 +97,13 @@
         function getTypeNameById(id) {
             switch (id) {
                 case "candidate_dissertation":
-                    return "Кандидатская диссертация";
+                    return "Кандидатские диссертации";
                 case "master_dissertation":
-                    return "Магистерская диссертация";
+                    return "Магистерские диссертации";
                 case "graduation_project":
-                    return "Дипломный проект";
+                    return "Дипломные проекты";
                 case "bachelor_work":
-                    return "Выпускная бакалаврская работа";
+                    return "Выпускные бакалаврские работы";
                 default:
                     return ""
             }

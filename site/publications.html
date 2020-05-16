@@ -63,7 +63,6 @@
         <h3 class="title" align="center">Публикации</h3>
 
         <div class=>
-            <h5 class="section">Все Публикации</h5>
             <div id="publications" class="list-group w-75 center"></div>
         </div>
 
@@ -75,7 +74,7 @@
                 for (let i = 0; i < response.length; i++) {
                     let year = response[i].year
                     $("#publications").append(`<div id=${year} class='list-group year'></div>`)
-                    $(`#${year}`).append(`<h5 class='list-group'>${year}</h5>`)
+                    $(`#${year}`).append(`<h5 class='list-group section'>${year}</h5>`)
                     for (let j = 0; j < response[i].titles.length; j++) {
                         $(`#${year}`).append(`<div class='list-group-item'>${response[i].titles[j]}</div>`)
                     }
