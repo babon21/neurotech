@@ -1,0 +1,266 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Stuff Template</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="" />
+	<meta name="keywords" content="" />
+	<meta name="author" content="" />
+
+  <!-- Facebook and Twitter integration -->
+	<meta property="og:title" content=""/>
+	<meta property="og:image" content=""/>
+	<meta property="og:url" content=""/>
+	<meta property="og:site_name" content=""/>
+	<meta property="og:description" content=""/>
+	<meta name="twitter:title" content="" />
+	<meta name="twitter:image" content="" />
+	<meta name="twitter:url" content="" />
+	<meta name="twitter:card" content="" />
+	
+	<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" rel="stylesheet">
+	
+	<!-- Animate.css -->
+	<link rel="stylesheet" href="css/animate.css">
+	<!-- Icomoon Icon Fonts-->
+	<link rel="stylesheet" href="css/icomoon.css">
+	<!-- Bootstrap  -->
+	<link rel="stylesheet" href="css/bootstrap.css">
+
+	<!-- Magnific Popup -->
+	<link rel="stylesheet" href="css/magnific-popup.css">
+
+	<!-- Flexslider  -->
+	<link rel="stylesheet" href="css/flexslider.css">
+
+	<!-- Owl Carousel -->
+	<link rel="stylesheet" href="css/owl.carousel.min.css">
+	<link rel="stylesheet" href="css/owl.theme.default.min.css">
+	
+	<!-- Flaticons  -->
+	<link rel="stylesheet" href="fonts/flaticon/font/flaticon.css">
+
+	<!-- Theme style  -->
+	<link rel="stylesheet" href="css/style.css">
+
+	<!-- Modernizr JS -->
+	<script src="js/modernizr-2.6.2.min.js"></script>
+	<!-- FOR IE9 below -->
+	<!--[if lt IE 9]>
+	<script src="js/respond.min.js"></script>
+	<![endif]-->
+
+
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://kit.fontawesome.com/9f3b120353.js" crossorigin="anonymous"></script>
+
+	<link rel="stylesheet" type="text/css" href="study-materials.css">
+
+	</head>
+	<body>
+		
+	<div class="colorlib-loader"></div>
+
+	<div id="page">
+		<nav class="colorlib-nav" role="navigation">
+			<div class="top-menu">
+				<div class="container">
+					<div class="row">
+						<div class="col-xs-4">
+							<div id="colorlib-logo">
+								<a href="index-test.html">Нейроморфные Технологии</a>
+							</div>
+						</div>
+						<div class="col-xs-8 text-right menu-1">
+							<ul>
+								<li><a href="index-test.html">Главная</a></li>
+								<li><a href="publications-test.html">Публикации</a></li>
+								<li><a href="students-test.html">Студенты</a></li>
+								<li class="active"><a href="study-materials-test.html">Учебные материалы</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</nav>
+
+		<aside id="colorlib-breadcrumbs">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-12 breadcrumbs text-center">
+						<h2>Учебно-методические материалы</h2>
+					</div>
+				</div>
+			</div>
+		</aside>
+
+		<div id="colorlib-container">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-10 col-md-offset-1">
+						
+						<!-- <div class="row row-pb-md"> -->
+							<!-- <div class="blog-entry"> -->
+
+								<div class="center">
+									<div class="section">
+										<h5 class="section-title">Все дисциплины</h5>
+										<div id="disciplines" class="list-group"></div>
+									</div>
+						
+									<h5 class="section-title">Текущий семестр</h5>
+									<div id="current" class="list-group"></div>
+								</div>
+								<!-- <div id="publications" class="center"></div> -->
+							<!-- </div> -->
+
+							
+							<script>
+
+
+								$(document).ready(function () {
+									$.get("http://localhost:8080/disciplines", function (response) {
+										for (let i = 0; i < response.length; i++) {
+											console.log(response[i])
+						
+						
+											$("#disciplines").append(`<a href="" class="list-group-item" data-toggle="collapse" data-target="#item-${i}">
+												<i class="fas fa-chevron-right"></i> ${response[i].name}</a>`);
+											$("#disciplines").append(`<div class="list-group collapse" id="item-${i}">`);
+						
+											if (response[i].is_current_semester === true) {
+												$("#current").append(`<a href="" class="list-group-item" data-toggle="collapse" data-target="#cur-item-${i}">
+												<i class="fas fa-chevron-right"></i> ${response[i].name}</a>`);
+												$("#current").append(`<div class="list-group collapse" id="cur-item-${i}">`);
+						
+												if (response[i].hasOwnProperty('lections') === true) {
+													$(`#cur-item-${i}`).append(`<a href="" class="list-group-item" data-toggle="collapse" data-target="#cur-item-${i}-1">
+												<i class="fas fa-chevron-right"></i> Лекции</a>`)
+													$(`#cur-item-${i}`).append(`<div class="list-group collapse" id="cur-item-${i}-1">`)
+						
+													for (let j = 0; j < response[i].lections.length; j++) {
+														$(`#cur-item-${i}-1`).append(`<a href="" class="list-group-item discipline" data-toggle="collapse" data-target="#cur-item-${i}-${j}">${response[i].lections[j].name}</a>`)
+													}
+												}
+						
+												if (response[i].hasOwnProperty('books') === true) {
+													$(`#cur-item-${i}`).append(`<a href="" class="list-group-item" data-toggle="collapse" data-target="#cur-item-${i}-2">
+												<i class="fas fa-chevron-right"></i> Учебные и методические пособия</a>`)
+													$(`#cur-item-${i}`).append(`<div class="list-group collapse" id="cur-item-${i}-2">`)
+						
+													for (let j = 0; j < response[i].books.length; j++) {
+														$(`#cur-item-${i}-2`).append(`<a href="" class="list-group-item" data-toggle="collapse" data-target="#cur-item-${i}-${j}">${response[i].books[j].name}</a>`)
+													}
+												}
+						
+												if (response[i].hasOwnProperty('references') === true) {
+													$(`#cur-item-${i}`).append(`<a href="" class="list-group-item" data-toggle="collapse" data-target="#cur-item-${i}-3">
+												<i class="fas fa-chevron-right"></i> Ссылки</a>`)
+													$(`#cur-item-${i}`).append(`<div class="list-group collapse" id="cur-item-${i}-3">`)
+						
+													for (let j = 0; j < response[i].references.length; j++) {
+														$(`#cur-item-${i}-3`).append(`<a href="" class="list-group-item" data-toggle="collapse" data-target="#cur-item-${i}-${j}">${response[i].references[j].url}</a>`)
+													}
+												}
+						
+												$(`#cur-item-${i}`).append("</div>")
+											}
+						
+											if (response[i].hasOwnProperty('lections') === true) {
+												$(`#item-${i}`).append(`<a href="" class="list-group-item" data-toggle="collapse" data-target="#item-${i}-1">
+												<i class="fas fa-chevron-right"></i> Лекции</a>`)
+												$(`#item-${i}`).append(`<div class="list-group collapse" id="item-${i}-1">`)
+						
+												for (let j = 0; j < response[i].lections.length; j++) {
+													$(`#item-${i}-1`).append(`<a href="" class="list-group-item discipline" data-toggle="collapse" data-target="#item-${i}-${j}">${response[i].lections[j].name}</a>`)
+												}
+											}
+						
+											if (response[i].hasOwnProperty('books') === true) {
+												$(`#item-${i}`).append(`<a href="" class="list-group-item" data-toggle="collapse" data-target="#item-${i}-2">
+												<i class="fas fa-chevron-right"></i> Учебные и методические пособия</a>`)
+												$(`#item-${i}`).append(`<div class="list-group collapse" id="item-${i}-2">`)
+						
+												for (let j = 0; j < response[i].books.length; j++) {
+													$(`#item-${i}-2`).append(`<a href="" class="list-group-item" data-toggle="collapse" data-target="#item-${i}-${j}">${response[i].books[j].name}</a>`)
+												}
+											}
+						
+											if (response[i].hasOwnProperty('references') === true) {
+												$(`#item-${i}`).append(`<a href="" class="list-group-item" data-toggle="collapse" data-target="#item-${i}-3">
+												<i class="fas fa-chevron-right"></i> Ссылки</a>`)
+												$(`#item-${i}`).append(`<div class="list-group collapse" id="item-${i}-3">`)
+						
+												for (let j = 0; j < response[i].references.length; j++) {
+													$(`#item-${i}-3`).append(`<a href="" class="list-group-item" data-toggle="collapse" data-target="#item-${i}-${j}">${response[i].references[j].url}</a>`)
+												}
+											}
+						
+											$(`#item-${i}`).append("</div>")
+										}
+						
+										$(function () {
+						
+											$('.list-group-item').on('click', function () {
+												$('.fas', this)
+													.toggleClass('fa-chevron-right')
+													.toggleClass('fa-chevron-down');
+											});
+						
+										});
+									});
+						
+								});
+							</script>
+
+						<!-- </div> -->
+						
+					</div>
+				</div>
+			</div>
+		</div>		
+	</div>
+
+	<div class="gototop js-top">
+		<a href="#" class="js-gotop"><i class="icon-arrow-up2"></i></a>
+	</div>
+	
+	<!-- jQuery -->
+	<script src="js/jquery.min.js"></script>
+	<!-- jQuery Easing -->
+	<script src="js/jquery.easing.1.3.js"></script>
+	<!-- Bootstrap -->
+	<script src="js/bootstrap.min.js"></script>
+	<!-- Waypoints -->
+	<script src="js/jquery.waypoints.min.js"></script>
+	<!-- Flexslider -->
+	<script src="js/jquery.flexslider-min.js"></script>
+	<!-- Owl carousel -->
+	<script src="js/owl.carousel.min.js"></script>
+	<!-- Magnific Popup -->
+	<script src="js/jquery.magnific-popup.min.js"></script>
+	<script src="js/magnific-popup-options.js"></script>
+	<!-- Main -->
+	<script src="js/main.js"></script>
+
+
+
+	
+
+	</body>
+</html>
+
