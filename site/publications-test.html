@@ -53,8 +53,8 @@
 	<![endif]-->
 
 
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	<!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"> -->
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
         integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
         crossorigin="anonymous"></script>
@@ -128,7 +128,7 @@
 						
 											$(`#${year}`).append(`<h5 class='section-title'>${year}</h5>`)
 											for (let j = 0; j < response[i].titles.length; j++) {
-												$(`#${year}`).append(`<div class='list-group-item'>${response[i].titles[j]}</div>`)
+												$(`#${year}`).append(`<div class='list-group-item publication'>${response[i].titles[j]}</div>`)
 											}
 										}
 									});
@@ -139,7 +139,46 @@
 					</div>
 				</div>
 			</div>
-		</div>		
+		</div>
+		
+		<footer id="colorlib-footer" role="contentinfo">
+			<div class="container">
+				<div class="row row-pb-md" style="margin-bottom: 0;">
+					<div class="col-md-12">
+						<h2>КОНТАКТЫ:</h2>
+						<h4>Гаврилов А.И.</h4>
+					</div>
+				</div>
+				<div class="row row-pb-md">
+					<div class="col-md-6">
+						<h4>
+							E-mail: andr_gavrilov@yahoo.com <br>
+							Twitter.com/HybridAI
+						</h4>
+					</div>
+					<div class="col-md-6">
+						<h4>Phone +7 383-3461177 <br>
+							https://www.facebook.com/andr.gavrilov</h4>
+
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<p>
+							<small class="block">
+								<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+								Copyright &copy;
+								<script>document.write(new Date().getFullYear());</script> All rights reserved | This
+								template is made with <i class="icon-heart" aria-hidden="true"></i> by <a
+									href="https://colorlib.com" target="_blank">Colorlib</a>
+								<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></small>
+							<small class="block">Demo Images: <a href="http://unsplash.co/"
+									target="_blank">Unsplash</a></small>
+						</p>
+					</div>
+				</div>
+			</div>
+		</footer>
 	</div>
 
 	<div class="gototop js-top">
