@@ -49,6 +49,7 @@
 	<!--[if lt IE 9]>
 	<script src="js/respond.min.js"></script>
 	<![endif]-->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 </head>
 
@@ -146,28 +147,50 @@
 					</div>
 				</div>
 
-				<div class="row row-pb-md student post">
-					<div class="col-md-12">
-						<h4>11th ICT Innovations Conference</h4>
-						<p>Conference venue: Ohrid, Macedonia, Conference dates: 17-19 October 2019, Submission of
-							papers: May 31, 2019</p>
+				<div id="news">
+					<div class="row row-pb-md student post">
+						<div class="row row-pb-md news-title-entry">
+							<div class="col-md-6">
+								<h4>Example news 11th ICT Innovations Conference</h4>
+							</div>
+							<div class="col-md-6 news-data-entry">
+								<h4 class="news-data-entry-color">12.04.2020</h4>
+							</div>
+						</div>
+						<div class="row row-pb-md news-content-entry">
+							<div class="col-md-12">
+								<p>Conference venue: Ohrid, Macedonia, Conference dates: 17-19 October 2019, Submission
+									of
+									papers: May 31, 2019</p>
+							</div>
+						</div>
 					</div>
-				</div>
 
-				<div class="row row-pb-md student post">
-					<div class="col-md-12">
-						<h4>11th ICT Innovations Conference</h4>
-						<p>Conference venue: Ohrid, Macedonia, Conference dates: 17-19 October 2019, Submission of
-							papers: May 31, 2019</p>
-					</div>
-				</div>
+					<script>
+						$(document).ready(function () {
+							$.get("http://localhost:8080/news", function (response) {
+								for (let i = 0; i < response.length; i++) {
+									console.log(response)
 
-				<div class="row row-pb-md student post">
-					<div class="col-md-12">
-						<h4>11th ICT Innovations Conference</h4>
-						<p>Conference venue: Ohrid, Macedonia, Conference dates: 17-19 October 2019, Submission of
-							papers: May 31, 2019</p>
-					</div>
+									$("#news").append(`<div class="row row-pb-md student post">
+								 	      			   		<div class="row row-pb-md news-title-entry">
+																<div class="col-md-6">
+																	<h4>${response[i].title}</h4>
+																</div>
+																<div class="col-md-6 news-data-entry">
+																	<h4 class="news-data-entry-color">${response[i].publication_date}</h4>
+																</div>
+															</div>
+															<div class="row row-pb-md news-content-entry">
+																<div class="col-md-12" style="word-wrap:break-word;">
+																	<p>${response[i].content}</p>
+																</div>
+															</div>
+														</div>`)
+								}
+							});
+						});
+					</script>
 				</div>
 
 			</div>

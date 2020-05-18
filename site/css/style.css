@@ -1527,3 +1527,24 @@ ul {
   border-bottom: 1px solid #f0f0f0;
   padding: 5px 0;
 }
+
+.news-title-entry {
+  margin-left: 0px;
+  margin-bottom: 0;
+  padding-bottom: 15px;
+}
+
+.news-data-entry {
+  color: #979797;
+  padding-left: 36%;
+}
+
+.news-data-entry-color {
+  color: #979797 !important;
+}
+
+.news-content-entry {
+  margin-left: 0px;
+  margin-bottom: 0;
+  margin-right: 8px;
+}
