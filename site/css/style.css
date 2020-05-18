@@ -1548,3 +1548,7 @@ ul {
   margin-bottom: 0;
   margin-right: 8px;
 }
+
+.category li:hover {
+  color: #F6490D;
+ }
