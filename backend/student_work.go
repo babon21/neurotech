@@ -20,11 +20,6 @@ type StudentWork struct {
 	Type    string        `json:"type,omitempty" bson:"type"`
 }
 
-type TypeWork struct {
-	Type  string        `json:"type" bson:"_id"`
-	Works []StudentWork `json:"works"`
-}
-
 type StudentWorkHandler struct {
 	Collection *mgo.Collection
 }
@@ -79,9 +74,9 @@ func (h *StudentWorkHandler) UpdateStudentWork(w http.ResponseWriter, r *http.Re
 
 func (h *StudentWorkHandler) GetStudentWorkList(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Get student work list request!")
-	isGroup := r.URL.Query().Get("type_group")
+	typeWork := r.URL.Query().Get("type_group")
 
-	if isGroup == "" {
+	if typeWork == "" {
 		list := []*StudentWork{}
 		rangeParam := r.URL.Query().Get("range")
 		// need check to rangeParam
@@ -91,21 +86,20 @@ func (h *StudentWorkHandler) GetStudentWorkList(w http.ResponseWriter, r *http.R
 
 	fmt.Println("Get publications list with year group request from site!")
 
-	var result []TypeWork
 	pipeline := []bson.M{
 		{
-			"$group": bson.M{
-				"_id": "$type",
-				"works": bson.M{
-					"$push": bson.M{
-						"title":   "$title",
-						"student": "$student",
-						"year":    "$year",
-					},
-				},
+			"$match": bson.M{
+				"type": typeWork,
+			},
+		},
+		{
+			"$sort": bson.M {
+				"year": -1,
 			},
 		},
 	}
+
+	var result []StudentWork
 
 	err := h.Collection.Pipe(pipeline).All(&result)
 	if err != nil {
